@@ -1,0 +1,247 @@
+/**
+ * Admin JavaScript for Img Panda
+ *
+ * @package Img_Panda
+ */
+
+(function ($) {
+  "use strict";
+
+  /**
+   * Initialize when DOM is ready
+   */
+  $(document).ready(function () {
+    initQualitySlider();
+    initRescanButton();
+    initSettingsSave();
+    initAiControls();
+  });
+
+  /**
+   * Initialize quality slider
+   */
+  function initQualitySlider() {
+    $('input[name="Img_Panda_settings[quality]"]').on('input', function() {
+        $('#quality-val-display').text($(this).val() + '%');
+    });
+  }
+
+  /**
+   * Handle AJAX settings save
+   */
+  function initSettingsSave() {
+    // Single source of truth: the form's submit event
+    $('#img-panda-main-form').on('submit', function(e) {
+        e.preventDefault();
+        saveAllSettings();
+    });
+  }
+
+  function saveAllSettings() {
+    var $form = $('#img-panda-main-form');
+    var $btn = $('button[type="submit"]');
+    
+    $btn.prop('disabled', true).css('opacity', '0.7');
+    
+    $.ajax({
+        url: ajaxurl,
+        type: 'POST',
+        data: {
+            action: 'img_panda_save_settings',
+            nonce: imgPandaAdminData.nonce,
+            form_data: $form.serialize()
+        },
+        success: function(response) {
+            if (response.success) {
+                showToast('✓ ' + response.data.message, 'success');
+            } else {
+                showToast('✗ ' + response.data.message, 'error');
+            }
+        },
+        error: function() {
+            showToast('✗ Connection error', 'error');
+        },
+        complete: function() {
+            $btn.prop('disabled', false).css('opacity', '1');
+        }
+    });
+  }
+
+  /**
+   * AI Controls: Testing & Model switching
+   */
+  function initAiControls() {
+    var $provider = $('#ai-provider-select');
+    var $model = $('#ai-model-select');
+    var $testBtn = $('#btn-test-ai');
+    
+    var models = {
+        gemini: [
+            { id: 'gemini-flash-latest', name: 'Gemini 1.5 Flash (Free & Fast)' },
+            { id: 'gemini-pro-latest', name: 'Gemini 1.5 Pro (Free Tier available)' },
+            { id: 'gemini-pro-vision', name: 'Gemini Pro Vision (Legacy)' }
+        ],
+        openai: [
+            { id: 'gpt-4o-mini', name: 'GPT-4o Mini (Paid)' },
+            { id: 'gpt-4o', name: 'GPT-4o (High Cost)' },
+            { id: 'gpt-4-turbo', name: 'GPT-4 Turbo' }
+        ]
+    };
+
+    function updateModels() {
+        var selected = $provider.val();
+        var list = models[selected] || [];
+        $model.empty();
+        $.each(list, function(i, m) {
+            $model.append($('<option>', { value: m.id, text: m.name }));
+        });
+        
+        // Match saved value if possible
+        if (typeof imgPandaAdminData !== 'undefined' && imgPandaAdminData.settings) {
+            $model.val(imgPandaAdminData.settings.ai_model);
+        }
+    }
+
+    $provider.on('change', updateModels);
+    updateModels();
+
+    // Test API Connection
+    $testBtn.on('click', function() {
+        var $btn = $(this);
+        var key = $('input[name="Img_Panda_settings[ai_api_key]"]').val();
+        
+        if (!key) {
+            showToast('Please enter an API key first', 'error');
+            return;
+        }
+
+        $btn.prop('disabled', true).text('Testing...');
+        
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'img_panda_test_ai_connection',
+                nonce: imgPandaAdminData.nonce,
+                key: key,
+                provider: $provider.val(),
+                model: $model.val()
+            },
+            success: function(response) {
+                if (response.success) {
+                    showToast(response.data.message, 'success');
+                } else {
+                    showToast('Error: ' + response.data.message, 'error');
+                }
+            },
+            error: function() {
+                showToast('API Connection failed', 'error');
+            },
+            complete: function() {
+                $btn.prop('disabled', false).text('Test API');
+            }
+        });
+    });
+  }
+
+  function showToast(msg, type) {
+    // Simple alert or toast logic
+    alert(msg);
+  }
+
+  /**
+   * Initialize re-scan button functionality
+   */
+  function initRescanButton() {
+    $("#btn-rescan-server").on("click", function () {
+      var $btn = $(this);
+      var $icon = $btn.find(".material-symbols-outlined");
+      var $text = $btn.find(".btn-text");
+      var $status = $("#rescan-status");
+
+      // Add loading state
+      $btn.prop("disabled", true);
+      $icon.addClass("animate-spin");
+      $text.text("Scanning...");
+      $status.text("").removeClass("text-success text-red-500");
+
+      $.ajax({
+        url: ajaxurl,
+        type: "POST",
+        data: {
+          action: "img_panda_check_server",
+          nonce:
+            typeof imgPandaAdminData !== "undefined" ? imgPandaAdminData.nonce : "",
+        },
+        success: function (response) {
+          if (response.success) {
+            $status
+              .text("✓ Server scanned successfully!")
+              .addClass("text-success");
+            setTimeout(function () {
+              location.reload();
+            }, 1000);
+          } else {
+            $status.text("✗ Scan failed").addClass("text-red-500");
+          }
+        },
+        error: function () {
+          $status.text("✗ Server error").addClass("text-red-500");
+        },
+        complete: function () {
+          $btn.prop("disabled", false);
+          $icon.removeClass("animate-spin");
+          $text.text("Re-scan Server");
+        },
+      });
+    });
+  }
+
+
+  /**
+   * Initialize Dashboard Chart
+   */
+  function initDashboardChart() {
+    var ctx = document.getElementById("img-panda-stats-chart");
+    if (
+      !ctx ||
+      typeof Chart === "undefined" ||
+      typeof imgPandaAdminData === "undefined"
+    ) {
+      return;
+    }
+
+    var total = parseInt(imgPandaAdminData.stats.total);
+    var converted = parseInt(imgPandaAdminData.stats.converted);
+    var pending = parseInt(imgPandaAdminData.stats.pending);
+
+    new Chart(ctx, {
+      type: "doughnut",
+      data: {
+        labels: ["Converted", "Pending"],
+        datasets: [
+          {
+            data: [converted, pending],
+            backgroundColor: ["#7c3bed", "#f2f0f4"],
+            hoverOffset: 4,
+            borderWidth: 0,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            display: false,
+          },
+        },
+        cutout: "80%",
+      },
+    });
+  }
+
+  // Final check for chart on load
+  if ($("#img-panda-stats-chart").length) {
+    initDashboardChart();
+  }
+})(jQuery);

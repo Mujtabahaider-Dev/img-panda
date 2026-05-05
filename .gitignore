@@ -1,0 +1,18 @@
+# WordPress Default Gitignore
+# --------------------------
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Project specific
+/tmp/
+/dist/
