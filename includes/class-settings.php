@@ -461,7 +461,7 @@ class Img_Panda_Settings
 			);
 
 			wp_enqueue_style('img-panda-admin', IMG_PANDA_PLUGIN_URL . 'admin/css/admin-style.css', array(), IMG_PANDA_VERSION, 'all');
-			wp_enqueue_style('img-panda-material-icons', 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200', array(), IMG_PANDA_VERSION, 'all');
+
 
 			wp_enqueue_style(
 				'img-panda-bulk',

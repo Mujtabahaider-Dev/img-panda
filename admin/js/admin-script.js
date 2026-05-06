@@ -169,7 +169,7 @@
     const timer = setTimeout(() => {
         $toast.addClass('translate-y-20 opacity-0');
         setTimeout(() => $toast.remove(), 500);
-    }, 4000);
+    }, 2000);
 
     // Dismiss on click
     $toast.on('click', function() {
