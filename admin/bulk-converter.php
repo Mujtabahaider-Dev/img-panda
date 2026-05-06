@@ -148,6 +148,19 @@ require_once IMG_PANDA_PLUGIN_DIR . 'admin/header.php';
 						</div>
 					</div>
 
+					<!-- Deep Scan Notice -->
+					<div class="bg-primary/5 border border-primary/10 rounded-2xl p-6 mb-8 flex items-start gap-4">
+						<div class="size-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center shrink-0">
+							<span class="material-symbols-outlined">analytics</span>
+						</div>
+						<div>
+							<h5 class="text-sm font-bold text-primary mb-1"><?php esc_html_e('Intelligent Deep Scan Active', 'img-panda'); ?></h5>
+							<p class="text-xs opacity-70 leading-relaxed">
+								<?php esc_html_e('Our engine is performing a cross-audit. Any image missing either its WebP version or its SEO Alt-Text is currently targeted in the count above.', 'img-panda'); ?>
+							</p>
+						</div>
+					</div>
+
 					<div class="flex flex-wrap gap-4">
 						<button id="btn-start-conversion"
 							class="bg-primary hover:bg-primary/90 text-white font-bold py-4 px-8 rounded-2xl transition-all shadow-lg shadow-primary/20 flex items-center gap-2">

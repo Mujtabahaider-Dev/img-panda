@@ -684,9 +684,11 @@ class Img_Panda_Converter
 			$webp_metadata = wp_generate_attachment_metadata($webp_id, $webp_path);
 			wp_update_attachment_metadata($webp_id, $webp_metadata);
 
-			// Link WebP to original
+			// Link WebP to original and protect original from bulk re-processing
 			update_post_meta($webp_id, '_img_panda_original_id', $attachment_id);
 			update_post_meta($attachment_id, '_img_panda_version_id', $webp_id);
+			update_post_meta($attachment_id, '_img_panda_is_original_source', '1');
+            update_post_meta($attachment_id, '_img_panda_converted', '1');
 
             // Copy Alt-Text from original if it exists
             $original_alt = get_post_meta($attachment_id, '_wp_attachment_image_alt', true);

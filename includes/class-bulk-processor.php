@@ -50,26 +50,51 @@ class Img_Panda_Bulk_Processor
 	{
 		$args = array(
 			'post_type'      => 'attachment',
-			'post_mime_type' => array( 'image/jpeg', 'image/png', 'image/gif', 'image/pjpeg', 'image/jfif' ), // Standard WP types + variations
-			'post_status'    => 'any', // Relax status check
+			'post_mime_type' => array( 'image/jpeg', 'image/png', 'image/gif', 'image/pjpeg', 'image/jfif', 'image/webp' ),
+			'post_status'    => 'any',
 			'posts_per_page' => -1,
 			'fields'         => 'ids',
 			'meta_query'     => array(
 				'relation' => 'AND',
+				// Rule 1: If it is an "Original" from a backup pair, leave it alone (Sacred Backup)
 				array(
-					'key'     => '_img_panda_original_id',
+					'key'     => '_img_panda_is_original_source',
 					'compare' => 'NOT EXISTS',
 				),
 				array(
 					'relation' => 'OR',
+					// Case A: Needs WebP conversion (must not be a variation already)
 					array(
-						'key'     => '_img_panda_converted',
-						'compare' => 'NOT EXISTS',
+						'relation' => 'AND',
+						array(
+							'key'     => '_img_panda_original_id',
+							'compare' => 'NOT EXISTS',
+						),
+						array(
+							'relation' => 'OR',
+							array(
+								'key'     => '_img_panda_converted',
+								'compare' => 'NOT EXISTS',
+							),
+							array(
+								'key'     => '_img_panda_converted',
+								'value'   => '0',
+								'compare' => '=',
+							),
+						),
 					),
+					// Case B: Missing Alt Text (SEO Audit) - Target ANY image
 					array(
-						'key'     => '_img_panda_converted',
-						'value'   => '0',
-						'compare' => '=',
+						'relation' => 'OR',
+						array(
+							'key'     => '_wp_attachment_image_alt',
+							'compare' => 'NOT EXISTS',
+						),
+						array(
+							'key'     => '_wp_attachment_image_alt',
+							'value'   => '',
+							'compare' => '=',
+						),
 					),
 				),
 			),
@@ -339,75 +364,65 @@ class Img_Panda_Bulk_Processor
 			$original_size = filesize($file_path);
 			$log_entry['original_size'] = $original_size;
 
-			// Check if already converted
-			$already_converted = get_post_meta($image_id, '_img_panda_converted', true);
-			if ('1' === $already_converted) {
-				$stats['skipped']++;
-				$log_entry['status'] = 'skipped';
-				$log_entry['message'] = __('Already converted', 'img-panda');
-				$stats['logs'][] = $log_entry;
-				continue;
-			}
+			// Check current states
+			$is_already_converted = (get_post_meta($image_id, '_img_panda_converted', true) === '1');
+			$current_alt = get_post_meta($image_id, '_wp_attachment_image_alt', true);
+			$is_missing_alt = empty($current_alt);
 
-			// Generate AI Alt Text if enabled (Bulk override OR Global setting)
+			// 1. Generate AI Alt Text if enabled AND missing
 			$should_gen_alt = ($generate_alt_bulk === 1) || (isset($settings['auto_alt']) && '1' === $settings['auto_alt']);
 			
-			if ($should_gen_alt) {
+			if ($should_gen_alt && $is_missing_alt) {
 				require_once IMG_PANDA_PLUGIN_DIR . 'includes/class-ai-handler.php';
 				$ai_handler = new Img_Panda_AI_Handler();
 				$ai_handler->generate_alt_text($image_id);
 			}
 
-			// Backup if enabled
-			if (isset($settings['enable_backup']) && '1' === $settings['enable_backup']) {
-				$this->backup_image($image_id, $file_path);
-			}
-
-			// Convert image
-			$result = $converter->convert_image_to_webp($file_path, $quality);
-
-			if ($result['success']) {
-				$webp_size = file_exists($result['webp_path']) ? filesize($result['webp_path']) : 0;
-				$log_entry['new_size'] = $webp_size;
-
-				// Get replace mode setting
-				$settings = get_option('Img_Panda_settings', array());
-				$replace_mode = isset($settings['replace_original']) ? $settings['replace_original'] : 'keep_both';
-
-				if ('replace' === $replace_mode) {
-					// Replace original with WebP
-					$this->replace_with_webp($image_id, $file_path, $result['webp_path']);
-					$log_entry['message'] = $result['message'] . ' (Original replaced)';
-				} else {
-					// Keep both files
-					$log_entry['message'] = $result['message'];
-
-					// Create WebP attachment if enabled
-					$converter->create_webp_attachment($image_id);
+			// 2. Convert to WebP if missing
+			if (!$is_already_converted) {
+				// Backup if enabled
+				if (isset($settings['enable_backup']) && '1' === $settings['enable_backup']) {
+					$this->backup_image($image_id, $file_path);
 				}
 
-				// Update post meta
-				update_post_meta($image_id, '_img_panda_converted', '1');
-				update_post_meta($image_id, '_img_panda_original_size', $original_size);
-				update_post_meta($image_id, '_img_panda_new_size', $webp_size);
-				update_post_meta($image_id, '_img_panda_conversion_date', time());
-				update_post_meta($image_id, '_img_panda_path', $result['webp_path']);
+				// Convert image
+				$result = $converter->convert_image_to_webp($file_path, $quality);
 
-				// Update stats
-				$this->update_stats(array(
-					'space_saved' => $original_size - $webp_size,
-					'conversion_successful' => 1,
-				));
+				if ($result['success']) {
+					$webp_size = file_exists($result['webp_path']) ? filesize($result['webp_path']) : 0;
+					$log_entry['new_size'] = $webp_size;
 
-				$stats['successful']++;
-				$log_entry['status'] = 'success';
+					// Force "Replace Mode" for Bulk Optimizer (as requested)
+					$replace_mode = 'replace';
+
+					if ('replace' === $replace_mode) {
+						$this->replace_with_webp($image_id, $file_path, $result['webp_path']);
+					} else {
+						$converter->create_webp_attachment($image_id);
+					}
+
+					// Update post meta for conversion
+					update_post_meta($image_id, '_img_panda_converted', '1');
+					update_post_meta($image_id, '_img_panda_original_size', $original_size);
+					update_post_meta($image_id, '_img_panda_new_size', $webp_size);
+					update_post_meta($image_id, '_img_panda_conversion_date', time());
+					update_post_meta($image_id, '_img_panda_path', $result['webp_path']);
+
+					$this->update_stats(array('space_saved' => $original_size - $webp_size, 'conversion_successful' => 1));
+					$stats['successful']++;
+					$log_entry['status'] = 'success';
+					$log_entry['message'] = __('Optimized & WebP created', 'img-panda');
+				} else {
+					$stats['failed']++;
+					$log_entry['status'] = 'failed';
+					$log_entry['message'] = $result['message'];
+					$this->log_error($image_id, $result['message']);
+				}
 			} else {
-				$stats['failed']++;
-				$log_entry['status'] = 'failed';
-				$log_entry['message'] = $result['message'];
-
-				// Log error
-				$this->log_error($image_id, $result['message']);
+				// We already handled Alt Text above, so if we are here, we just skip WebP
+				$stats['successful']++; // Still count as success because we finished what was needed (SEO)
+				$log_entry['status'] = 'success';
+				$log_entry['message'] = __('SEO Updated (Already WebP)', 'img-panda');
 			}
 
 			$stats['logs'][] = $log_entry;
@@ -673,5 +688,4 @@ class Img_Panda_Bulk_Processor
 		}
 	}
 }
-
 
