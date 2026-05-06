@@ -145,8 +145,38 @@
   }
 
   function showToast(msg, type) {
-    // Simple alert or toast logic
-    alert(msg);
+    // Remove existing toast if any
+    $('.img-panda-toast-js').remove();
+    
+    const bgColor = type === 'success' ? 'bg-success' : 'bg-red-500';
+    const icon = type === 'success' ? 'check_circle' : 'error';
+    
+    const $toast = $(`
+        <div class="img-panda-toast-js fixed bottom-8 right-8 z-[9999] flex items-center gap-3 ${bgColor} text-white px-6 py-4 rounded-2xl shadow-2xl transition-all duration-500 translate-y-20 opacity-0 cursor-pointer">
+            <span class="material-symbols-outlined">${icon}</span>
+            <span class="font-bold text-sm tracking-tight">${msg}</span>
+        </div>
+    `);
+    
+    $('body').append($toast);
+    
+    // Animate in
+    setTimeout(() => {
+        $toast.removeClass('translate-y-20 opacity-0');
+    }, 10);
+    
+    // Auto-remove after 4s
+    const timer = setTimeout(() => {
+        $toast.addClass('translate-y-20 opacity-0');
+        setTimeout(() => $toast.remove(), 500);
+    }, 4000);
+
+    // Dismiss on click
+    $toast.on('click', function() {
+        clearTimeout(timer);
+        $toast.addClass('translate-y-20 opacity-0');
+        setTimeout(() => $toast.remove(), 500);
+    });
   }
 
   /**
