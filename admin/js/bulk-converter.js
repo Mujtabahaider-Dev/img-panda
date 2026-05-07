@@ -386,15 +386,12 @@
     $("#btn-pause-conversion").hide();
     $("#btn-stop-conversion").hide();
 
-    // Show reload message
+    // Auto-reload after 2 seconds to update stats
     setTimeout(function () {
-      if (
-        confirm(
-          "Conversion completed! Would you like to reload the page to see updated statistics?",
-        )
-      ) {
+      addLog("↻ Reloading page to update statistics...", "info");
+      setTimeout(function() {
         location.reload();
-      }
+      }, 1500);
     }, 1000);
   }
 
