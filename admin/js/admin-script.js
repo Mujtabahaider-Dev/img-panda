@@ -108,6 +108,7 @@
     // Test API Connection
     $testBtn.on('click', function() {
         var $btn = $(this);
+        var originalText = $btn.html();
         var key = $('input[name="Img_Panda_settings[ai_api_key]"]').val();
         
         if (!key) {
@@ -115,7 +116,8 @@
             return;
         }
 
-        $btn.prop('disabled', true).text('Testing...');
+        // Stage 1: Testing
+        $btn.prop('disabled', true).addClass('opacity-50').text('Testing...');
         
         $.ajax({
             url: ajaxurl,
@@ -130,15 +132,23 @@
             success: function(response) {
                 if (response.success) {
                     showToast(response.data.message, 'success');
+                    // Stage 2: Success State
+                    $btn.text('✓ Connected!').css('background', '#10b981').css('color', 'white');
                 } else {
                     showToast('Error: ' + response.data.message, 'error');
+                    // Stage 2: Error State
+                    $btn.text('✗ Failed').css('background', '#ef4444').css('color', 'white');
                 }
             },
             error: function() {
                 showToast('API Connection failed', 'error');
+                $btn.text('✗ Error').css('background', '#ef4444').css('color', 'white');
             },
             complete: function() {
-                $btn.prop('disabled', false).text('Test API');
+                // Stage 3: Graceful Reset
+                setTimeout(function() {
+                    $btn.prop('disabled', false).removeClass('opacity-50').html(originalText).css('background', '').css('color', '');
+                }, 2000);
             }
         });
     });
