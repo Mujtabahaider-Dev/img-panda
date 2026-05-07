@@ -140,15 +140,16 @@
     }
 
     // Get filters
-    const filters = {
-      format: $("#filter-format").val(),
-      date_from: $("#filter-date-from").val(),
-      date_to: $("#filter-date-to").val(),
-      size: $("#filter-size").val(),
+    const gatherFilters = () => {
+      return {
+        format: $("#filter-format").val(),
+        size: $("#filter-size").val(),
+        min_size: $("#filter-min-size").val() || 0,
+        generate_alt: $("#bulk-ai-alt").is(":checked") ? 1 : 0,
+      };
     };
 
-    // AI Option
-    const generateAlt = $("#bulk-ai-alt").is(":checked") ? 1 : 0;
+    const filters = gatherFilters();
 
     // Show progress section
     $("#conversion-progress").slideDown();
@@ -170,7 +171,7 @@
         action: "img_panda_start_bulk",
         nonce: imgPandaBulkData.nonce,
         filters: filters,
-        generate_alt: generateAlt,
+        generate_alt: filters.generate_alt,
       },
       success: function (response) {
         if (response.success) {

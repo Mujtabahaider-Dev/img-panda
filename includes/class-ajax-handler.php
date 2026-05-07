@@ -130,11 +130,8 @@ class Img_Panda_Ajax_Handler
 			wp_send_json_error(array('message' => __('No images to convert', 'img-panda')));
 		}
 
-		// Get AI Alt Text option
-		$generate_alt = isset($_POST['generate_alt']) ? intval($_POST['generate_alt']) : 0;
-
-		// Initialize bulk conversion
-		$processor->initialize_bulk_conversion($image_ids, $generate_alt);
+		// Initialize bulk conversion with all filters
+		$processor->initialize_bulk_conversion($image_ids, $filters);
 
 		wp_send_json_success(array(
 			'message' => __('Bulk conversion started', 'img-panda'),

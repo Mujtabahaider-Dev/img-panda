@@ -214,30 +214,39 @@ require_once IMG_PANDA_PLUGIN_DIR . 'admin/header.php';
 					<h4 class="text-xl font-bold"><?php esc_html_e('Advanced Options', 'img-panda'); ?></h4>
 				</div>
 
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+					<!-- Format Selection -->
 					<div class="flex flex-col gap-3">
-						<label
-							class="text-sm font-bold opacity-60"><?php esc_html_e('Image Format', 'img-panda'); ?></label>
-						<select id="filter-format"
-							class="bg-[#f2f0f4] dark:bg-white/5 border-none rounded-xl p-4 font-medium focus:ring-2 focus:ring-primary">
+						<label class="text-sm font-bold opacity-60"><?php esc_html_e('Image Format', 'img-panda'); ?></label>
+						<select id="filter-format" class="bg-[#f2f0f4] dark:bg-white/5 border-none rounded-xl p-4 font-medium focus:ring-2 focus:ring-primary">
 							<option value="all"><?php esc_html_e('All (Recommended)', 'img-panda'); ?></option>
 							<option value="jpeg"><?php esc_html_e('JPEG Only', 'img-panda'); ?></option>
 							<option value="png"><?php esc_html_e('PNG Only', 'img-panda'); ?></option>
 						</select>
 					</div>
+
+					<!-- Size Selection -->
 					<div class="flex flex-col gap-3">
-						<label
-							class="text-sm font-bold opacity-60"><?php esc_html_e('Select Sizes', 'img-panda'); ?></label>
-						<select id="filter-size"
-							class="bg-[#f2f0f4] dark:bg-white/5 border-none rounded-xl p-4 font-medium focus:ring-2 focus:ring-primary">
-							<option value="all"><?php esc_html_e('All Sizes', 'img-panda'); ?></option>
-							<option value="full"><?php esc_html_e('Full Size Only', 'img-panda'); ?></option>
+						<label class="text-sm font-bold opacity-60"><?php esc_html_e('Optimization Depth', 'img-panda'); ?></label>
+						<select id="filter-size" class="bg-[#f2f0f4] dark:bg-white/5 border-none rounded-xl p-4 font-medium focus:ring-2 focus:ring-primary">
+							<option value="all"><?php esc_html_e('All Sizes (Best Performance)', 'img-panda'); ?></option>
+							<option value="full"><?php esc_html_e('Full Size Only (Faster Setup)', 'img-panda'); ?></option>
 						</select>
+                        <p class="text-[10px] opacity-40 mt-1"><?php esc_html_e('Recommended for maximum site speed scores.', 'img-panda'); ?></p>
+					</div>
+
+					<!-- Min Size Filter -->
+					<div class="flex flex-col gap-3">
+						<label class="text-sm font-bold opacity-60"><?php esc_html_e('Min File Size (KB)', 'img-panda'); ?></label>
+						<div class="relative">
+							<input type="number" id="filter-min-size" value="0" min="0" class="bg-[#f2f0f4] dark:bg-white/5 border-none rounded-xl p-4 w-full font-bold focus:ring-2 focus:ring-primary" placeholder="0">
+						</div>
+                        <p class="text-[10px] opacity-40 mt-1"><?php esc_html_e('Target only heavy images (e.g. 1024 for 1MB).', 'img-panda'); ?></p>
 					</div>
 				</div>
 
 				<!-- AI Options Toggle -->
-				<div class="mt-10 pt-8 border-t border-[#f2f0f4] dark:border-white/5">
+				<div class="mt-8 pt-8 border-t border-[#f2f0f4] dark:border-white/5">
 					<div class="flex items-center justify-between bg-primary/[0.03] dark:bg-white/[0.02] p-6 rounded-2xl border border-primary/10">
 						<div class="flex items-center gap-4">
 							<div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
@@ -245,7 +254,7 @@ require_once IMG_PANDA_PLUGIN_DIR . 'admin/header.php';
 							</div>
 							<div>
 								<p class="font-bold text-sm"><?php esc_html_e('Generate AI Alt-Text', 'img-panda'); ?></p>
-								<p class="text-xs opacity-60"><?php esc_html_e('Analyze images and write missing SEO descriptions during conversion.', 'img-panda'); ?></p>
+								<p class="text-xs opacity-60"><?php esc_html_e('Analyze images and write missing SEO descriptions.', 'img-panda'); ?></p>
 							</div>
 						</div>
 						<label class="relative inline-flex items-center cursor-pointer">

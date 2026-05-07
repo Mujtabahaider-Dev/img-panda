@@ -136,6 +136,35 @@ class Img_Panda_Bulk_Processor
 	}
 
 	/**
+	 * Filter images by minimum file size (KB).
+	 *
+	 * @since 1.0.0
+	 * @param array $image_ids Array of image IDs.
+	 * @param int   $min_size  Min size in KB.
+	 * @return array Filtered IDs.
+	 */
+	private function filter_by_min_size($image_ids, $min_size)
+	{
+		if (empty($image_ids)) {
+			return array();
+		}
+
+		$filtered = array();
+		$min_bytes = $min_size * 1024;
+
+		foreach ($image_ids as $image_id) {
+			$file = get_attached_file($image_id);
+			if ($file && file_exists($file)) {
+				if (filesize($file) >= $min_bytes) {
+					$filtered[] = $image_id;
+				}
+			}
+		}
+
+		return $filtered;
+	}
+
+	/**
 	 * Filter images by WordPress size.
 	 *
 	 * @since 1.0.0
@@ -224,7 +253,7 @@ class Img_Panda_Bulk_Processor
 	 * @param array $image_ids Array of image IDs to convert.
 	 * @return bool Success status.
 	 */
-	public function initialize_bulk_conversion($image_ids, $generate_alt = 0)
+	public function initialize_bulk_conversion($image_ids, $filters = array())
 	{
 		// Store queue in option
 		update_option('img_panda_conversion_queue', $image_ids);
@@ -236,7 +265,7 @@ class Img_Panda_Bulk_Processor
 			'failed' => 0,
 			'skipped' => 0,
 			'start_time' => time(),
-			'generate_alt' => $generate_alt,
+			'filters' => $filters,
 		));
 
 		return true;
@@ -336,7 +365,7 @@ class Img_Panda_Bulk_Processor
 		// Get settings & Progress (for bulk specific options)
 		$settings = get_option('Img_Panda_settings', array());
 		$progress = get_option('img_panda_conversion_progress', array());
-		$generate_alt_bulk = isset($progress['generate_alt']) ? (int)$progress['generate_alt'] : 0;
+		$generate_alt_bulk = isset($progress['filters']['generate_alt']) ? (int)$progress['filters']['generate_alt'] : 0;
 		$quality = isset($settings['quality']) ? intval($settings['quality']) : 60;
 
 		foreach ($image_ids as $image_id) {
@@ -380,13 +409,23 @@ class Img_Panda_Bulk_Processor
 
 			// 2. Convert to WebP if missing
 			if (!$is_already_converted) {
-				// Backup if enabled
-				if (isset($settings['enable_backup']) && '1' === $settings['enable_backup']) {
-					$this->backup_image($image_id, $file_path);
-				}
+				// Apply Min Size Filter for WebP conversion ONLY
+				$min_size_kb = isset($progress['filters']['min_size']) ? intval($progress['filters']['min_size']) : 0;
+				$min_bytes = $min_size_kb * 1024;
 
-				// Convert image
-				$result = $converter->convert_image_to_webp($file_path, $quality);
+				if ($min_bytes > 0 && $original_size < $min_bytes) {
+					// Skip WebP but count as "Success" because we might have handled Alt Text
+					$log_entry['message'] = sprintf(__('SEO handled. WebP skipped (Size < %d KB)', 'img-panda'), $min_size_kb);
+					$stats['successful']++;
+					$log_entry['status'] = 'success';
+				} else {
+					// Backup if enabled
+					if (isset($settings['enable_backup']) && '1' === $settings['enable_backup']) {
+						$this->backup_image($image_id, $file_path);
+					}
+
+					// Convert image
+					$result = $converter->convert_image_to_webp($file_path, $quality);
 
 				if ($result['success']) {
 					$webp_size = file_exists($result['webp_path']) ? filesize($result['webp_path']) : 0;
@@ -412,13 +451,14 @@ class Img_Panda_Bulk_Processor
 					$stats['successful']++;
 					$log_entry['status'] = 'success';
 					$log_entry['message'] = __('Optimized & WebP created', 'img-panda');
-				} else {
-					$stats['failed']++;
-					$log_entry['status'] = 'failed';
-					$log_entry['message'] = $result['message'];
-					$this->log_error($image_id, $result['message']);
-				}
-			} else {
+					} else {
+						$stats['failed']++;
+						$log_entry['status'] = 'failed';
+						$log_entry['message'] = $result['message'];
+						$this->log_error($image_id, $result['message']);
+					}
+				} // End of WebP else
+			} else { // Already converted
 				// We already handled Alt Text above, so if we are here, we just skip WebP
 				$stats['successful']++; // Still count as success because we finished what was needed (SEO)
 				$log_entry['status'] = 'success';
