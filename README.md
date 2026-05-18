@@ -18,14 +18,6 @@
 
 ---
 
-## 📸 Dashboard Preview
-
-> [!TIP]
-> **Insert your Dashboard screenshot here!** (Replace the text below with your image link)
-
-![Img Panda Dashboard](https://raw.githubusercontent.com/Mujtabahaider-Dev/img-panda/main/screenshot.png)
-
----
 
 ## 🛠️ Installation
 
