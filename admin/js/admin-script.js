@@ -92,13 +92,19 @@
         var selected = $provider.val();
         var list = models[selected] || [];
         $model.empty();
+        
         $.each(list, function(i, m) {
             $model.append($('<option>', { value: m.id, text: m.name }));
         });
         
-        // Match saved value if possible
-        if (typeof imgPandaAdminData !== 'undefined' && imgPandaAdminData.settings) {
+        // Priority 1: Match saved value from settings
+        if (typeof imgPandaAdminData !== 'undefined' && imgPandaAdminData.settings && imgPandaAdminData.settings.ai_model) {
             $model.val(imgPandaAdminData.settings.ai_model);
+        }
+        
+        // Priority 2: If no value is selected (first run or invalid), default to the first one in list
+        if (!$model.val() && list.length > 0) {
+            $model.val(list[0].id);
         }
     }
 

@@ -269,24 +269,7 @@ require_once IMG_PANDA_PLUGIN_DIR . 'admin/header.php';
 				</div>
 			</div>
 
-			<!-- Mak8it Promo Card -->
-			<div class="rounded-3xl p-8 bg-gradient-to-br from-[#7c3bed] to-[#a855f7] text-white shadow-xl shadow-primary/20 mt-8 flex items-center justify-between gap-8">
-				<div class="flex items-center gap-6">
-					<div class="size-12 rounded-2xl bg-white/20 flex items-center justify-center shrink-0">
-						<span class="material-symbols-outlined text-[28px]">widgets</span>
-					</div>
-					<div>
-						<h5 class="text-xl font-bold mb-1"><?php esc_html_e('More Free Tools', 'img-panda'); ?></h5>
-						<p class="text-sm opacity-80 leading-relaxed">
-							<?php esc_html_e('Discover more free WordPress solutions built by Mak8it to supercharge your website.', 'img-panda'); ?>
-						</p>
-					</div>
-				</div>
-				<a href="https://mak8it.com" target="_blank" rel="noopener noreferrer"
-					class="bg-white text-primary px-8 py-3 rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-opacity-90 transition-all shrink-0">
-					<?php esc_html_e('Visit Mak8it.com', 'img-panda'); ?>
-				</a>
-			</div>
+
 		</div>
 
 		<!-- Right Column: Configuration Panel -->

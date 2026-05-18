@@ -59,7 +59,7 @@ class Img_Panda_Settings
 			'manage_options',
 			'img-panda',
 			array($this, 'render_settings_page'),
-			$this->get_menu_icon(),
+			'dashicons-format-image',
 			65
 		);
 
@@ -92,17 +92,6 @@ class Img_Panda_Settings
 			'img-panda-system-info',
 			array($this, 'render_system_info_page')
 		);
-	}
-
-	/**
-	 * Get menu icon.
-	 *
-	 * @since 1.0.0
-	 * @return string Dashicon class name.
-	 */
-	private function get_menu_icon()
-	{
-		return 'dashicons-format-image';
 	}
 
 	/**
@@ -348,7 +337,7 @@ class Img_Panda_Settings
 
 		// Sanitize AI Settings
 		$sanitized['ai_provider'] = isset($input['ai_provider']) ? sanitize_text_field($input['ai_provider']) : 'gemini';
-		$sanitized['ai_model']    = isset($input['ai_model']) ? sanitize_text_field($input['ai_model']) : 'gemini-1.5-flash';
+		$sanitized['ai_model']    = isset($input['ai_model']) ? sanitize_text_field($input['ai_model']) : 'gemini-flash-latest';
 		$sanitized['ai_api_key']  = isset($input['ai_api_key']) ? sanitize_text_field($input['ai_api_key']) : '';
 		$sanitized['auto_alt']    = (isset($input['auto_alt']) && '1' === $input['auto_alt']) ? '1' : '0';
 
