@@ -520,32 +520,7 @@ class Img_Panda_Converter
 					?>
 					</p>
 				</div>
-                <style>
-                    /* Toast Animation */
-                    @keyframes imgPandaSlideIn {
-                        from { transform: translateX(100%) scale(0.95); opacity: 0; }
-                        to { transform: translateX(0) scale(1); opacity: 1; }
-                    }
-                    /* Style the auto-injected dismiss button */
-                    .img-panda-toast.notice.is-dismissible .notice-dismiss { right: 10px; top: 10px; }
-                    .img-panda-toast.notice.is-dismissible .notice-dismiss::before { color: rgba(255, 255, 255, 0.6); }
-                    .img-panda-toast.notice.is-dismissible .notice-dismiss:hover::before { color: #ffffff; }
-                    .img-panda-toast.notice.is-dismissible .notice-dismiss:focus { box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5); outline: none; border-radius: 4px;}
-                </style>
-                <script>
-                    jQuery(document).ready(function($) {
-                        setTimeout(function() {
-                            $('.img-panda-toast').css({
-                                'transition': 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
-                                'opacity': '0',
-                                'transform': 'translateX(100%)'
-                            });
-                            setTimeout(function() {
-                                $('.img-panda-toast').remove();
-                            }, 500);
-                        }, 5000); // 5 seconds
-                    });
-                </script>
+
 			</div>
 
 			<?php

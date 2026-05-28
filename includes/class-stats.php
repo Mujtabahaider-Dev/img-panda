@@ -100,6 +100,7 @@ class Img_Panda_Stats
 
 		// Sum up original sizes for accurate percentage
 		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Aggregate stats query, caching handled by get_cached_stats()
 		$stats['original_total_size'] = $wpdb->get_var(
 			"SELECT SUM(CAST(meta_value AS UNSIGNED)) FROM {$wpdb->postmeta} WHERE meta_key = '_img_panda_original_size'"
 		);
@@ -139,7 +140,9 @@ class Img_Panda_Stats
 	{
 		global $wpdb;
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Aggregate stats query, no user input
 		$original = (float) $wpdb->get_var( "SELECT SUM(CAST(meta_value AS UNSIGNED)) FROM {$wpdb->postmeta} WHERE meta_key = '_img_panda_original_size'" );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Aggregate stats query, no user input
 		$new      = (float) $wpdb->get_var( "SELECT SUM(CAST(meta_value AS UNSIGNED)) FROM {$wpdb->postmeta} WHERE meta_key = '_img_panda_new_size'" );
 
 		return max(0, (int) ($original - $new));
@@ -220,7 +223,9 @@ class Img_Panda_Stats
 	{
 		global $wpdb;
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Aggregate stats query, no user input
 		$original = (float) $wpdb->get_var( "SELECT SUM(CAST(meta_value AS UNSIGNED)) FROM {$wpdb->postmeta} WHERE meta_key = '_img_panda_original_size'" );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Aggregate stats query, no user input
 		$new      = (float) $wpdb->get_var( "SELECT SUM(CAST(meta_value AS UNSIGNED)) FROM {$wpdb->postmeta} WHERE meta_key = '_img_panda_new_size'" );
 
 		if ( $original <= 0 ) {

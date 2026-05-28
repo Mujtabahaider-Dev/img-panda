@@ -414,10 +414,32 @@ class Img_Panda_Settings
 			);
 
 			wp_enqueue_style(
-				'img-panda-admin',
-				IMG_PANDA_PLUGIN_URL . 'admin/css/admin-style.css',
+				'img-panda-header-layout',
+				IMG_PANDA_PLUGIN_URL . 'admin/css/header-layout.css',
 				array('img-panda-tailwind'),
 				IMG_PANDA_VERSION
+			);
+
+			wp_enqueue_style(
+				'img-panda-admin',
+				IMG_PANDA_PLUGIN_URL . 'admin/css/admin-style.css',
+				array('img-panda-tailwind', 'img-panda-header-layout'),
+				IMG_PANDA_VERSION
+			);
+
+			wp_enqueue_style(
+				'img-panda-toast',
+				IMG_PANDA_PLUGIN_URL . 'admin/css/toast-notice.css',
+				array(),
+				IMG_PANDA_VERSION
+			);
+
+			wp_enqueue_script(
+				'img-panda-toast',
+				IMG_PANDA_PLUGIN_URL . 'admin/js/toast-notice.js',
+				array('jquery'),
+				IMG_PANDA_VERSION,
+				true
 			);
 
 			wp_enqueue_script(
@@ -445,12 +467,9 @@ class Img_Panda_Settings
 				'img-panda-chart',
 				IMG_PANDA_PLUGIN_URL . 'admin/js/vendor/chart.min.js',
 				array(),
-				'4.4.1',
+				'4.5.1',
 				true
 			);
-
-			wp_enqueue_style('img-panda-admin', IMG_PANDA_PLUGIN_URL . 'admin/css/admin-style.css', array(), IMG_PANDA_VERSION, 'all');
-
 
 			wp_enqueue_style(
 				'img-panda-bulk',
