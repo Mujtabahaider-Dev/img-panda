@@ -18,7 +18,7 @@ require_once IMG_PANDA_PLUGIN_DIR . 'includes/class-bulk-processor.php';
 
 $stats = Img_Panda_Stats::get_stats();
 $processor = new Img_Panda_Bulk_Processor();
-$unconverted_count = count($processor->get_unconverted_images());
+$unconverted_count = $processor->get_unconverted_images_count();
 $support = Img_Panda_Converter::check_webp_support();
 $settings = get_option('Img_Panda_settings', array());
 
@@ -320,10 +320,10 @@ require_once IMG_PANDA_PLUGIN_DIR . 'admin/header.php';
 					<div>
 						<p style="font-size:10px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#64748b;margin:0 0 8px 2px;"><?php esc_html_e('Neural Model', 'img-panda'); ?></p>
 						<div style="position:relative;">
-							<select name="Img_Panda_settings[ai_model]" id="ai-model-select" style="width:100%;background:#fff;border:1.5px solid #f2f0f4;color:#131118;padding:12px 36px 12px 14px;border-radius:12px;font-size:13px;font-weight:600;appearance:none;outline:none;cursor:pointer;transition:border-color 0.2s;">
+							<input type="text" name="Img_Panda_settings[ai_model]" id="ai-model-input" list="ai-model-suggestions" value="<?php echo esc_attr(isset($settings['ai_model']) ? $settings['ai_model'] : 'gemini-1.5-flash'); ?>" style="width:100%;background:#fff;border:1.5px solid #f2f0f4;color:#131118;padding:12px 14px;border-radius:12px;font-size:13px;font-weight:600;outline:none;box-sizing:border-box;transition:border-color 0.2s;" placeholder="<?php esc_attr_e('Enter model name...', 'img-panda'); ?>">
+							<datalist id="ai-model-suggestions">
 								<!-- Populated by JS -->
-							</select>
-							<span class="material-symbols-outlined" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:16px;color:#94a3b8;pointer-events:none;">expand_more</span>
+							</datalist>
 						</div>
 					</div>
 				</div>
@@ -335,6 +335,14 @@ require_once IMG_PANDA_PLUGIN_DIR . 'admin/header.php';
 						<a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" style="font-size:10px;font-weight:700;color:#7c3bed;text-decoration:none;letter-spacing:0.05em;"><?php esc_html_e('Get Free Key ↗', 'img-panda'); ?></a>
 					</div>
 					<input type="password" name="Img_Panda_settings[ai_api_key]" value="<?php echo esc_attr(isset($settings['ai_api_key']) ? $settings['ai_api_key'] : ''); ?>" style="width:100%;background:#faf8fc;border:1.5px solid #f2f0f4;color:#131118;padding:14px 16px;border-radius:12px;font-size:13px;outline:none;box-sizing:border-box;transition:border-color 0.2s;" placeholder="<?php esc_attr_e('Paste your API key here...', 'img-panda'); ?>">
+				</div>
+
+				<!-- API Endpoint URL Field -->
+				<div>
+					<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding:0 2px;">
+						<p style="font-size:10px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#64748b;margin:0;"><?php esc_html_e('Custom API URL (Optional)', 'img-panda'); ?></p>
+					</div>
+					<input type="text" name="Img_Panda_settings[ai_api_url]" value="<?php echo esc_attr(isset($settings['ai_api_url']) ? $settings['ai_api_url'] : ''); ?>" style="width:100%;background:#faf8fc;border:1.5px solid #f2f0f4;color:#131118;padding:14px 16px;border-radius:12px;font-size:13px;outline:none;box-sizing:border-box;transition:border-color 0.2s;" placeholder="<?php esc_attr_e('Leave empty for default API URL...', 'img-panda'); ?>">
 				</div>
 
 				<!-- Action Buttons -->

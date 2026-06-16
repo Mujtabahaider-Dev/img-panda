@@ -56,8 +56,8 @@ class Img_Panda_Activator
 			'enable_frontend_serving' => '1',
 		);
 
-		if (!get_option('img_panda_settings')) {
-			add_option('img_panda_settings', $default_options);
+		if (!get_option('Img_Panda_settings')) {
+			add_option('Img_Panda_settings', $default_options);
 		}
 
 		// Set activation time
@@ -73,8 +73,8 @@ class Img_Panda_Activator
 	{
 		// Migrate main settings
 		$old_settings = get_option('wp_webp_optimizer_settings');
-		if ($old_settings && !get_option('img_panda_settings')) {
-			update_option('img_panda_settings', $old_settings);
+		if ($old_settings && !get_option('Img_Panda_settings')) {
+			update_option('Img_Panda_settings', $old_settings);
 			delete_option('wp_webp_optimizer_settings');
 		}
 

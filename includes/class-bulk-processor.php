@@ -40,13 +40,14 @@ class Img_Panda_Bulk_Processor
 	}
 
 	/**
-	 * Get all unconverted images from media library.
+	/**
+	 * Get query arguments for unconverted images.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1.0
 	 * @param array $filters Filter parameters.
-	 * @return array Array of attachment IDs.
+	 * @return array Query arguments.
 	 */
-	public function get_unconverted_images($filters = array())
+	private function get_unconverted_query_args($filters = array())
 	{
 		$args = array(
 			'post_type'      => 'attachment',
@@ -124,6 +125,20 @@ class Img_Panda_Bulk_Processor
 			}
 		}
 
+		return $args;
+	}
+
+	/**
+	 * Get all unconverted images from media library.
+	 *
+	 * @since 1.0.0
+	 * @param array $filters Filter parameters.
+	 * @return array Array of attachment IDs.
+	 */
+	public function get_unconverted_images($filters = array())
+	{
+		$args = $this->get_unconverted_query_args($filters);
+
 		$query = new WP_Query($args);
 		$image_ids = $query->posts;
 
@@ -133,6 +148,31 @@ class Img_Panda_Bulk_Processor
 		}
 
 		return $image_ids;
+	}
+
+	/**
+	 * Get the count of all unconverted images from media library.
+	 *
+	 * High-performance database count that avoids loading all ID records into memory.
+	 *
+	 * @since 1.1.0
+	 * @param array $filters Filter parameters.
+	 * @return int Total unconverted count.
+	 */
+	public function get_unconverted_images_count($filters = array())
+	{
+		// If size filter is set, we must fallback to fetching all matching IDs and filtering in PHP
+		if (!empty($filters['size']) && 'all' !== $filters['size']) {
+			return count($this->get_unconverted_images($filters));
+		}
+
+		$args = $this->get_unconverted_query_args($filters);
+		$args['posts_per_page'] = 1;
+		$args['fields']         = 'ids';
+		$args['no_found_rows']  = false;
+
+		$query = new WP_Query($args);
+		return $query->found_posts;
 	}
 
 	/**

@@ -14,11 +14,12 @@ if (!defined('WP_UNINSTALL_PLUGIN')) {
 
 // Delete plugin options
 delete_option('Img_Panda_settings');
-delete_option('Img_Panda_stats');
-delete_option('Img_Panda_activated');
+delete_option('img_panda_stats');
+delete_option('img_panda_activated');
 delete_option('img_panda_conversion_progress');
 delete_option('img_panda_conversion_status');
 delete_option('img_panda_conversion_queue');
+delete_option('img_panda_conversion_errors');
 
 // Delete all post meta related to WebP conversion
 global $wpdb;

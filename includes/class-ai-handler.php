@@ -70,11 +70,39 @@ class Img_Panda_AI_Handler
 	 * set_test_credentials
 	 * Overrides internal settings for a single test connection.
 	 */
-	public function set_test_credentials($key, $provider, $model)
+	public function set_test_credentials($key, $provider, $model, $url = '')
 	{
 		$this->settings['ai_api_key']  = $key;
 		$this->settings['ai_provider'] = $provider;
 		$this->settings['ai_model']    = $model;
+		$this->settings['ai_api_url']  = $url;
+	}
+
+	/**
+	 * Test connection with the AI provider.
+	 * 
+	 * @return string|bool Test response or false on failure.
+	 */
+	public function test_connection()
+	{
+		// 1x1 transparent GIF base64
+		$base64_image = 'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+		$prompt = "What color is this image? Reply with just one word.";
+		
+		$api_key = isset($this->settings['ai_api_key']) ? $this->settings['ai_api_key'] : '';
+		$provider = isset($this->settings['ai_provider']) ? $this->settings['ai_provider'] : 'gemini';
+		
+		if (empty($api_key)) {
+			return false;
+		}
+		
+		if ('gemini' === $provider) {
+			return $this->call_gemini($base64_image, $api_key, $prompt, 'image/gif');
+		} elseif ('openai' === $provider) {
+			return $this->call_openai($base64_image, $api_key, $prompt, 'image/gif');
+		}
+		
+		return false;
 	}
 
 	/**
@@ -197,8 +225,16 @@ class Img_Panda_AI_Handler
 	 */
 	private function call_gemini($base64_image, $api_key, $prompt, $mime_type = 'image/jpeg')
 	{
-		$model = isset($this->settings['ai_model']) ? strtolower($this->settings['ai_model']) : 'gemini-flash-latest';
-		$url = "https://generativelanguage.googleapis.com/v1beta/models/" . $model . ":generateContent?key=" . $api_key;
+		$model = isset($this->settings['ai_model']) ? strtolower($this->settings['ai_model']) : 'gemini-1.5-flash';
+		if (isset($this->settings['ai_api_url']) && !empty($this->settings['ai_api_url'])) {
+			$url = $this->settings['ai_api_url'];
+			if (strpos($url, 'models/') === false && strpos($url, 'generateContent') === false) {
+				$url = rtrim($url, '/') . '/v1beta/models/' . $model . ':generateContent';
+			}
+		} else {
+			$url = "https://generativelanguage.googleapis.com/v1beta/models/" . $model . ":generateContent";
+		}
+		$url = add_query_arg('key', $api_key, $url);
 
 		$body = array(
 			'contents' => array(
@@ -249,7 +285,10 @@ class Img_Panda_AI_Handler
 	 */
 	private function call_openai($base64_image, $api_key, $prompt, $mime_type = 'image/jpeg')
 	{
-		$url = "https://api.openai.com/v1/chat/completions";
+		$url = isset($this->settings['ai_api_url']) && !empty($this->settings['ai_api_url']) ? $this->settings['ai_api_url'] : "https://api.openai.com/v1/chat/completions";
+		if (strpos($url, '/chat/completions') === false) {
+			$url = rtrim($url, '/') . '/chat/completions';
+		}
 		$model = isset($this->settings['ai_model']) ? $this->settings['ai_model'] : 'gpt-4o-mini';
 
 		$body = array(
@@ -282,6 +321,11 @@ class Img_Panda_AI_Handler
 		}
 
 		$data = json_decode(wp_remote_retrieve_body($response), true);
+
+		if (isset($data['error']['message'])) {
+			update_option('img_panda_ai_last_error', $data['error']['message']);
+			return false;
+		}
 
 		if (isset($data['choices'][0]['message']['content'])) {
 			delete_option('img_panda_ai_last_error');

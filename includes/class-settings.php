@@ -337,8 +337,9 @@ class Img_Panda_Settings
 
 		// Sanitize AI Settings
 		$sanitized['ai_provider'] = isset($input['ai_provider']) ? sanitize_text_field($input['ai_provider']) : 'gemini';
-		$sanitized['ai_model']    = isset($input['ai_model']) ? sanitize_text_field($input['ai_model']) : 'gemini-flash-latest';
+		$sanitized['ai_model']    = isset($input['ai_model']) ? sanitize_text_field($input['ai_model']) : 'gemini-1.5-flash';
 		$sanitized['ai_api_key']  = isset($input['ai_api_key']) ? sanitize_text_field($input['ai_api_key']) : '';
+		$sanitized['ai_api_url']  = isset($input['ai_api_url']) ? esc_url_raw(sanitize_text_field($input['ai_api_url'])) : '';
 		$sanitized['auto_alt']    = (isset($input['auto_alt']) && '1' === $input['auto_alt']) ? '1' : '0';
 
 		return $sanitized;

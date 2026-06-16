@@ -25,8 +25,7 @@ $processor = new Img_Panda_Bulk_Processor();
 $stats = Img_Panda_Stats::get_stats();
 
 // Get unconverted images count
-$unconverted_images = $processor->get_unconverted_images();
-$unconverted_count = count($unconverted_images);
+$unconverted_count = $processor->get_unconverted_images_count();
 
 $total_images = (int) $stats['total'];
 $converted_images = (int) $stats['converted'];

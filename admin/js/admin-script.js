@@ -72,14 +72,13 @@
    */
   function initAiControls() {
     var $provider = $('#ai-provider-select');
-    var $model = $('#ai-model-select');
+    var $model = $('#ai-model-input');
     var $testBtn = $('#btn-test-ai');
     
     var models = {
         gemini: [
-            { id: 'gemini-flash-latest', name: 'Gemini 1.5 Flash (Free & Fast)' },
-            { id: 'gemini-pro-latest', name: 'Gemini 1.5 Pro (Free Tier available)' },
-            { id: 'gemini-pro-vision', name: 'Gemini Pro Vision (Legacy)' }
+            { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash (Free & Fast)' },
+            { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro (Free Tier available)' }
         ],
         openai: [
             { id: 'gpt-4o-mini', name: 'GPT-4o Mini (Paid)' },
@@ -88,43 +87,72 @@
         ]
     };
 
-    function updateModels() {
+    var prevProvider = $provider.val();
+
+    function updateModels(isInit) {
         var selected = $provider.val();
         var list = models[selected] || [];
-        $model.empty();
+        var $datalist = $('#ai-model-suggestions');
+        $datalist.empty();
         
         $.each(list, function(i, m) {
-            $model.append($('<option>', { value: m.id, text: m.name }));
+            $datalist.append($('<option>', { value: m.id, text: m.name }));
         });
         
-        // Priority 1: Match saved value from settings
-        if (typeof imgPandaAdminData !== 'undefined' && imgPandaAdminData.settings && imgPandaAdminData.settings.ai_model) {
-            $model.val(imgPandaAdminData.settings.ai_model);
+        if (selected === 'gemini') {
+            $model.attr('placeholder', 'e.g. gemini-1.5-flash');
+        } else {
+            $model.attr('placeholder', 'e.g. gpt-4o-mini');
         }
         
-        // Priority 2: If no value is selected (first run or invalid), default to the first one in list
-        if (!$model.val() && list.length > 0) {
-            $model.val(list[0].id);
+        if (isInit !== true) {
+            var currentVal = $model.val();
+            var isPrevModel = false;
+            if (prevProvider && models[prevProvider]) {
+                $.each(models[prevProvider], function(i, m) {
+                    if (m.id === currentVal) {
+                        isPrevModel = true;
+                        return false;
+                    }
+                });
+            }
+            if (!currentVal || isPrevModel) {
+                if (list.length > 0) {
+                    $model.val(list[0].id);
+                }
+            }
         }
+        
+        prevProvider = selected;
     }
 
-    $provider.on('change', updateModels);
-    updateModels();
+    $provider.on('change', function() {
+        updateModels(false);
+    });
+    updateModels(true);
 
     // Test API Connection
     $testBtn.on('click', function() {
         var $btn = $(this);
         var originalText = $btn.html();
         var key = $('input[name="Img_Panda_settings[ai_api_key]"]').val();
+        var url = $('input[name="Img_Panda_settings[ai_api_url]"]').val();
         
-        if (!key) {
-            showToast('Please enter an API key first', 'error');
+        if (!key && !url) {
+            showToast('Please enter an API key or custom URL first', 'error');
             return;
         }
+        
+        console.log('Testing connection with data:', {
+            provider: $provider.val(),
+            model: $model.val(),
+            url: url,
+            key_length: key ? key.length : 0
+        });
 
         // Stage 1: Testing
         $btn.prop('disabled', true).addClass('opacity-50').text('Testing...');
-        
+
         $.ajax({
             url: ajaxurl,
             type: 'POST',
@@ -133,9 +161,11 @@
                 nonce: imgPandaAdminData.nonce,
                 key: key,
                 provider: $provider.val(),
-                model: $model.val()
+                model: $model.val(),
+                url: url
             },
             success: function(response) {
+                console.log('AJAX Success Response:', response);
                 if (response.success) {
                     showToast(response.data.message, 'success');
                     // Stage 2: Success State
@@ -146,7 +176,8 @@
                     $btn.text('✗ Failed').css('background', '#ef4444').css('color', 'white');
                 }
             },
-            error: function() {
+            error: function(xhr, status, error) {
+                console.log('AJAX Error Response:', xhr.responseText, status, error);
                 showToast('API Connection failed', 'error');
                 $btn.text('✗ Error').css('background', '#ef4444').css('color', 'white');
             },

@@ -67,33 +67,20 @@ class Img_Panda_Ajax_Handler
 		$ai = new Img_Panda_AI_Handler();
 		
 		// If testing unsaved settings
-		if (isset($_POST['key']) && !empty($_POST['key'])) {
+		if (isset($_POST['key']) || isset($_POST['url'])) {
             $ai->set_test_credentials(
-                sanitize_text_field($_POST['key']),
+                isset($_POST['key']) ? sanitize_text_field($_POST['key']) : '',
                 isset($_POST['provider']) ? sanitize_text_field($_POST['provider']) : 'gemini',
-                isset($_POST['model']) ? sanitize_text_field($_POST['model']) : 'gemini-1.5-flash'
+                isset($_POST['model']) ? sanitize_text_field($_POST['model']) : 'gemini-1.5-flash',
+                isset($_POST['url']) ? esc_url_raw(sanitize_text_field($_POST['url'])) : ''
             );
 		}
 		
-		// Find the most recent image to test with
-		$args = array(
-			'post_type'      => 'attachment',
-			'post_mime_type' => 'image',
-			'post_status'    => 'inherit',
-			'posts_per_page' => 1,
-		);
-		$query = new WP_Query($args);
-		
-		if (!$query->have_posts()) {
-			wp_send_json_error(array('message' => __('Please upload at least one image to your Media Library before testing.', 'img-panda')));
-		}
+		$result = $ai->test_connection();
 
-		$attachment_id = $query->posts[0]->ID;
-		$alt_text = $ai->generate_alt_text($attachment_id);
-
-		if ($alt_text) {
+		if ($result) {
 			wp_send_json_success(array(
-				'message' => __('AI Connection Successful! Description:', 'img-panda') . ' "' . $alt_text . '"'
+				'message' => __('AI Connection Successful! Response:', 'img-panda') . ' "' . $result . '"'
 			));
 		} else {
 			$error = get_option('img_panda_ai_last_error', __('Unknown error occurred during connection.', 'img-panda'));
