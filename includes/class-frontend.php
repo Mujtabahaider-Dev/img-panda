@@ -42,6 +42,9 @@ class Img_Panda_Frontend {
 
 		// Start output buffering
 		add_action( 'template_redirect', array( $this, 'start_buffering' ), 1 );
+
+		// Ensure the buffer is always closed on shutdown
+		add_action( 'shutdown', array( $this, 'stop_buffering' ), 0 );
 	}
 
 	/**
@@ -51,6 +54,20 @@ class Img_Panda_Frontend {
 	 */
 	public function start_buffering() {
 		ob_start( array( $this, 'replace_images' ) );
+	}
+
+	/**
+	 * Stop output buffering.
+	 *
+	 * Flushes and closes the buffer opened by start_buffering().
+	 * Hooked to 'shutdown' to guarantee execution regardless of plugin flow.
+	 *
+	 * @since 1.0.0
+	 */
+	public function stop_buffering() {
+		if ( ob_get_level() > 0 ) {
+			ob_end_flush();
+		}
 	}
 
 	/**

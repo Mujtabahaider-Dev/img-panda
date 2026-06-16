@@ -10,7 +10,7 @@
  * Text Domain: img-panda
  * Domain Path: /languages
  * Requires at least: 5.8
- * Tested up to: 7.1
+ * Tested up to: 6.7
  * Requires PHP: 7.4
  *
  * @package Img_Panda

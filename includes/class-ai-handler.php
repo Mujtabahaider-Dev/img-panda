@@ -168,6 +168,7 @@ class Img_Panda_AI_Handler
 			}
 
 		} catch (Exception $e) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			error_log('Img Panda AI Exception: ' . $e->getMessage());
 		}
 
@@ -194,13 +195,24 @@ class Img_Panda_AI_Handler
 		$saved = $editor->save($temp_file, 'image/jpeg');
 		
 		if (is_wp_error($saved)) {
-			@unlink($temp_file);
+			if ( file_exists( $temp_file ) ) {
+				wp_delete_file( $temp_file );
+			}
 			return false;
 		}
 
-		$data = file_get_contents($saved['path']);
-		@unlink($saved['path']);
-		@unlink($temp_file);
+		global $wp_filesystem;
+		if ( empty( $wp_filesystem ) ) {
+			require_once ABSPATH . '/wp-admin/includes/file.php';
+			WP_Filesystem();
+		}
+		$data = $wp_filesystem->get_contents( $saved['path'] );
+		if ( file_exists( $saved['path'] ) ) {
+			wp_delete_file( $saved['path'] );
+		}
+		if ( file_exists( $temp_file ) ) {
+			wp_delete_file( $temp_file );
+		}
 
 		return array(
 			'data' => base64_encode($data),
