@@ -1,0 +1,4 @@
+# Exclude files from release zip files
+.gitattributes export-ignore
+.gitignore export-ignore
+README.md export-ignore

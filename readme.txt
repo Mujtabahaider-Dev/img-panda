@@ -1,136 +1,121 @@
-<<<<<<< HEAD
-# 🐼 Img Panda: AI-Powered Image Optimizer for WordPress
-
-[![Version](https://img.shields.io/badge/version-1.0.0-purple.svg)](https://github.com/Mujtabahaider-Dev/img-panda)
-[![License](https://img.shields.io/badge/license-GPLv2-blue.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
-[![WordPress](https://img.shields.io/badge/WordPress-7.1+-0073AA.svg)](https://wordpress.org)
-=======
-=== Img Panda ===
+=== Mak8it Smart Image ===
 Contributors: mak8it
-Tags: webp, image optimization, convert, performance, speed
+Tags: webp, image optimization, ai alt text, performance, seo
 Requires at least: 5.8
-Tested up to: 6.7
+Tested up to: 7.0
 Requires PHP: 7.4
 Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Automatically convert images to WebP format for better performance. Includes AI-powered alt text generation via Google Gemini or OpenAI.
->>>>>>> 52308bcd29728265eedaab4b59b81de6498be39b
+Auto-convert images to WebP and generate AI-powered SEO alt text. Boost site speed and accessibility in one click.
 
-**Img Panda** is a premium-grade WordPress plugin designed to supercharge your website's performance and accessibility. It automatically converts your media library to WebP while using state-of-the-art **Vision AI** to write SEO-optimized Alt Text for you.
+== Description ==
 
-<<<<<<< HEAD
----
-
-## ✨ Key Features
-
-- **🧠 AI Vision Suite**: Automatically generates descriptive, SEO-first Alt Text using Google Gemini or OpenAI. No more missing accessibility data!
-- **⚡ Ultra-Fast WebP Conversion**: Reduces image file sizes by 40-80% without losing quality.
-- **🚀 One-Click Bulk Optimizer**: Scans and optimizes your entire existing library in the background.
-- **🛡️ Sacred Backup**: Always keeps a secure backup of your original JPEG/PNG files.
-- **📊 SaaS-Style Dashboard**: A modern, high-fidelity interface with real-time stats and savings health.
-
----
-=======
-**Img Panda** is a premium-grade WordPress plugin designed to supercharge your website's performance and accessibility. It automatically converts your media library to WebP while using state-of-the-art Vision AI to write SEO-optimized Alt Text for you.
+**Mak8it Smart Image** is a premium-grade WordPress plugin designed to supercharge your website's performance and SEO. It automatically converts your media library images to the modern WebP format — reducing file sizes by 40–80% — while using state-of-the-art Vision AI to write descriptive, SEO-optimized alt text for you.
 
 = Key Features =
 
-* **AI Vision Suite**: Automatically generates descriptive, SEO-first Alt Text using Google Gemini or OpenAI.
-* **Ultra-Fast WebP Conversion**: Reduces image file sizes by 40-80% without losing quality.
-* **One-Click Bulk Optimizer**: Scans and optimizes your entire existing library in the background.
-* **Sacred Backup**: Always keeps a secure backup of your original JPEG/PNG files.
-* **SaaS-Style Dashboard**: A modern, high-fidelity interface with real-time stats and savings health.
->>>>>>> 52308bcd29728265eedaab4b59b81de6498be39b
+* **WebP Conversion Engine** — Automatically converts JPEG and PNG uploads to WebP using your server's GD Library or Imagick. No external service required for conversion.
+* **AI Alt Text Generator** — Optionally uses Google Gemini or OpenAI to generate descriptive, SEO-first alt text for every image you upload.
+* **One-Click Bulk Optimizer** — Scans and converts your entire existing media library in the background with real-time progress tracking.
+* **Safe Backup Mode** — Keep a secure backup of your original JPEG/PNG files alongside the new WebP versions.
+* **SaaS-Style Dashboard** — A modern, high-fidelity admin interface with real-time stats, disk savings counter, and optimization health chart.
+* **Custom API Support** — Supports custom API endpoints and proxies for both Google Gemini and OpenAI.
 
-## 📸 Dashboard Preview
+= How WebP Conversion Works =
 
-<<<<<<< HEAD
-> [!TIP]
-> **Insert your Dashboard screenshot here!** (Replace the text below with your image link)
-=======
-1. Upload the `img-panda` folder to the `/wp-content/plugins/` directory.
+When a new image is uploaded to your media library, Mak8it Smart Image automatically converts it to WebP on your own server using PHP's GD Library or Imagick. No data leaves your server during this step.
+
+= How AI Alt Text Works =
+
+If you choose to enable the AI alt text feature and provide your own API key, the plugin will send a small, resized (max 512px) version of each uploaded image to the AI provider of your choice (Google Gemini or OpenAI) to generate a short, SEO-friendly description. This feature is **disabled by default** and only activates when you explicitly turn it on and enter your API key.
+
+== Installation ==
+
+1. Upload the `mak8it-smart-image` folder to the `/wp-content/plugins/` directory, or install it directly through the WordPress Plugins screen.
 2. Activate the plugin through the **Plugins** menu in WordPress.
-3. Navigate to **Img Panda** in the admin menu and configure your settings.
+3. Navigate to **Mak8it Smart Image** in the admin menu.
+4. Configure your WebP quality and file-handling settings.
+5. (Optional) Enable the AI Vision Engine, choose a provider (Gemini or OpenAI), and enter your API key to start generating alt text automatically.
 
 == Frequently Asked Questions ==
 
-= Does my server need to support WebP? =
+= Does my server need special software for WebP conversion? =
 
-Yes. Img Panda requires either GD Library (with WebP support) or Imagick. The plugin will detect and display your server's support status on the settings page.
+Yes. Mak8it Smart Image requires either GD Library (with WebP support, available on most hosts) or Imagick. The plugin automatically detects and displays your server's support status on the System Info page.
 
 = Will my original images be deleted? =
 
-Only if you choose the "Replace original with WebP" option under File Handling. By default, both files are kept.
+Only if you select the "Overwrite original files" option in the Compression Settings. The default mode ("Keep backup of originals") keeps both the original JPEG/PNG and the new WebP file.
 
-= Is my data sent to third-party services? =
+= Is my data sent to any external service? =
 
-Only if you explicitly enable the AI alt text feature and provide your own API key. No data is sent by default.
->>>>>>> 52308bcd29728265eedaab4b59b81de6498be39b
+Only if you explicitly enable the AI alt text feature and enter your own API key. WebP conversion happens entirely on your own server. See the "External Services" section for full details.
 
-![Img Panda Dashboard](https://raw.githubusercontent.com/Mujtabahaider-Dev/img-panda/main/screenshot.png)
+= Which AI providers are supported? =
 
-<<<<<<< HEAD
----
-=======
-1. Dashboard with image stats and savings overview.
-2. Bulk Converter page with progress tracking.
-3. Settings page with quality control and file handling options.
->>>>>>> 52308bcd29728265eedaab4b59b81de6498be39b
+Google Gemini (default, free tier available) and OpenAI (GPT-4o and compatible models). You must provide your own API key for either service.
 
-## 🛠️ Installation
+= Can I use a custom or proxy API endpoint? =
 
-<<<<<<< HEAD
-1.  **Clone** this repository into your `/wp-content/plugins/` directory:
-    ```bash
-    git clone https://github.com/Mujtabahaider-Dev/img-panda.git
-    ```
-2.  **Activate** the plugin in the WordPress Admin under the **Plugins** menu.
-3.  **Configure** your settings in the **Img Panda** menu.
-=======
+Yes. The "Custom API URL" field in the AI Vision Engine settings lets you point the plugin to any compatible endpoint.
+
+= Does the plugin support bulk conversion of existing images? =
+
+Yes. Use the **Bulk Converter** page to scan and convert your entire existing media library. Progress is displayed in real time.
+
+= What image formats does the plugin convert? =
+
+JPEG (`.jpg`, `.jpeg`) and PNG (`.png`) images are supported. GIF and SVG files are skipped automatically.
+
+== Screenshots ==
+
+1. Dashboard — Optimization health chart, stat cards, and recent conversions table.
+2. Bulk Converter — Real-time progress bar with per-image status.
+3. Settings — AI Vision Engine configuration, compression level slider, and file-handling strategy.
+4. System Info — Server compatibility check showing PHP, GD Library, and Imagick status.
+
+== Changelog ==
+
 = 1.0.0 =
 * Initial release.
->>>>>>> 52308bcd29728265eedaab4b59b81de6498be39b
+* WebP conversion via GD Library and Imagick.
+* AI alt text generation via Google Gemini and OpenAI.
+* One-click bulk optimizer with real-time progress.
+* SaaS-style admin dashboard with optimization health chart.
+* Custom API URL / proxy endpoint support.
+* Safe backup mode to preserve original image files.
 
----
+== Upgrade Notice ==
 
-<<<<<<< HEAD
-## 🔒 Privacy & AI Compliance
-
-Img Panda respects your privacy. No data is sent to external AI providers (Google/OpenAI) unless you manually enable the AI SEO feature and provide your own API key. 
-
----
-
-## 📄 License
-
-This project is licensed under the GPLv2 or later. See the [LICENSE](LICENSE) file for details.
-
----
-
-**Built with ❤️ by [Mak8it.com](https://mak8it.com)**
-=======
 = 1.0.0 =
-Initial release.
+Initial release. No upgrade steps required.
 
 == External Services ==
 
-This plugin optionally uses AI services to generate image alt text.
-The feature is only triggered when manually enabled by the user
-after providing their own API key.
+This plugin optionally connects to external AI services to generate image alt text. These features are **disabled by default** and are only activated when you explicitly enable them and provide your own API key.
+
+= Google Gemini (Google Generative Language API) =
+
+When the AI alt text feature is enabled and "Google Gemini" is selected as the provider, the plugin sends a resized (max 512×512 px), base64-encoded JPEG version of each newly uploaded image to Google's Generative Language API to generate a short, SEO-friendly description.
+
+**Data sent:** A small base64-encoded thumbnail of the uploaded image, plus a text prompt asking for an alt text description. No personally identifiable user data is transmitted.
+**When it is sent:** Only when a new image is uploaded to the media library AND the AI alt text feature is enabled AND a valid Gemini API key is configured.
+**Service provider:** Google LLC
+
+* Service home: https://ai.google.dev
+* Terms of Service: https://policies.google.com/terms
+* Privacy Policy: https://policies.google.com/privacy
 
 = OpenAI =
-Image alt text requests are sent to OpenAI's API.
-- https://openai.com
-- Terms: https://openai.com/policies/terms-of-use
-- Privacy: https://openai.com/policies/privacy-policy
 
-= Google Gemini =
-Image alt text requests are sent to Google's Generative Language API.
-- https://ai.google.dev
-- Terms: https://policies.google.com/terms
-- Privacy: https://policies.google.com/privacy
+When the AI alt text feature is enabled and "OpenAI" is selected as the provider, the plugin sends a resized (max 512×512 px), base64-encoded JPEG version of each newly uploaded image to the OpenAI API to generate a short, SEO-friendly description.
 
-No data is sent without the user providing their own API key
-and explicitly enabling the AI alt text feature.
->>>>>>> 52308bcd29728265eedaab4b59b81de6498be39b
+**Data sent:** A small base64-encoded thumbnail of the uploaded image, plus a text prompt asking for an alt text description. No personally identifiable user data is transmitted.
+**When it is sent:** Only when a new image is uploaded to the media library AND the AI alt text feature is enabled AND a valid OpenAI API key is configured.
+**Service provider:** OpenAI, L.L.C.
+
+* Service home: https://openai.com
+* Terms of Service: https://openai.com/policies/terms-of-use
+* Privacy Policy: https://openai.com/policies/privacy-policy

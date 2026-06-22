@@ -2,7 +2,7 @@
 /**
  * Fired during plugin activation and deactivation.
  *
- * @package Img_Panda
+ * @package Mkit_Si
  */
 
 // Exit if accessed directly
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 /**
  * Plugin Activator Class.
  */
-class Img_Panda_Activator
+class Mkit_Si_Activator
 {
 
 	/**
@@ -28,8 +28,8 @@ class Img_Panda_Activator
 		// Check PHP version
 		if (version_compare(PHP_VERSION, '7.4', '<')) {
 			wp_die(
-				esc_html__('Img Panda requires PHP 7.4 or higher. Please upgrade PHP.', 'img-panda'),
-				esc_html__('Plugin Activation Error', 'img-panda'),
+				esc_html__('Mak8it Smart Image requires PHP 7.4 or higher. Please upgrade PHP.', 'mak8it-smart-image'),
+				esc_html__('Plugin Activation Error', 'mak8it-smart-image'),
 				array('back_link' => true)
 			);
 		}
@@ -38,8 +38,8 @@ class Img_Panda_Activator
 		global $wp_version;
 		if (version_compare($wp_version, '5.8', '<')) {
 			wp_die(
-				esc_html__('Img Panda requires WordPress 5.8 or higher. Please upgrade WordPress.', 'img-panda'),
-				esc_html__('Plugin Activation Error', 'img-panda'),
+				esc_html__('Mak8it Smart Image requires WordPress 5.8 or higher. Please upgrade WordPress.', 'mak8it-smart-image'),
+				esc_html__('Plugin Activation Error', 'mak8it-smart-image'),
 				array('back_link' => true)
 			);
 		}
@@ -56,12 +56,12 @@ class Img_Panda_Activator
 			'enable_frontend_serving' => '1',
 		);
 
-		if (!get_option('Img_Panda_settings')) {
-			add_option('Img_Panda_settings', $default_options);
+		if (!get_option('Mkit_Si_settings')) {
+			add_option('Mkit_Si_settings', $default_options);
 		}
 
 		// Set activation time
-		add_option('img_panda_activated', time());
+		add_option('mkit_si_activated', time());
 	}
 
 	/**
@@ -73,56 +73,56 @@ class Img_Panda_Activator
 	{
 		// Migrate main settings
 		$old_settings = get_option('wp_webp_optimizer_settings');
-		if ($old_settings && !get_option('Img_Panda_settings')) {
-			update_option('Img_Panda_settings', $old_settings);
+		if ($old_settings && !get_option('Mkit_Si_settings')) {
+			update_option('Mkit_Si_settings', $old_settings);
 			delete_option('wp_webp_optimizer_settings');
 		}
 
 		// Migrate stats
 		$old_stats = get_option('wp_webp_stats');
-		if ($old_stats && !get_option('img_panda_stats')) {
-			update_option('img_panda_stats', $old_stats);
+		if ($old_stats && !get_option('mkit_si_stats')) {
+			update_option('mkit_si_stats', $old_stats);
 			delete_option('wp_webp_stats');
 		}
 
 		// Migrate conversion progress
 		$old_progress = get_option('wp_webp_conversion_progress');
 		if ($old_progress) {
-			update_option('img_panda_conversion_progress', $old_progress);
+			update_option('mkit_si_conversion_progress', $old_progress);
 			delete_option('wp_webp_conversion_progress');
 		}
 
 		// Migrate conversion status
 		$old_status = get_option('wp_webp_conversion_status');
 		if ($old_status) {
-			update_option('img_panda_conversion_status', $old_status);
+			update_option('mkit_si_conversion_status', $old_status);
 			delete_option('wp_webp_conversion_status');
 		}
 
 		// Migrate conversion queue
 		$old_queue = get_option('wp_webp_conversion_queue');
 		if ($old_queue) {
-			update_option('img_panda_conversion_queue', $old_queue);
+			update_option('mkit_si_conversion_queue', $old_queue);
 			delete_option('wp_webp_conversion_queue');
 		}
 
 		// Migrate conversion logs
 		$old_logs = get_option('wp_webp_conversion_logs');
 		if ($old_logs) {
-			update_option('img_panda_conversion_logs', $old_logs);
+			update_option('mkit_si_conversion_logs', $old_logs);
 			delete_option('wp_webp_conversion_logs');
 		}
 
 		// Migrate post meta keys (batch update for performance)
 		global $wpdb;
 		$meta_mappings = array(
-			'_webp_converted' => '_img_panda_converted',
-			'_webp_path' => '_img_panda_path',
-			'_webp_backup_path' => '_img_panda_backup_path',
-			'_webp_original_size' => '_img_panda_original_size',
-			'_webp_new_size' => '_img_panda_new_size',
-			'_webp_conversion_date' => '_img_panda_conversion_date',
-			'_webp_original_id' => '_img_panda_original_id',
+			'_webp_converted' => '_mkit_si_converted',
+			'_webp_path' => '_mkit_si_path',
+			'_webp_backup_path' => '_mkit_si_backup_path',
+			'_webp_original_size' => '_mkit_si_original_size',
+			'_webp_new_size' => '_mkit_si_new_size',
+			'_webp_conversion_date' => '_mkit_si_conversion_date',
+			'_webp_original_id' => '_mkit_si_original_id',
 		);
 
 		foreach ($meta_mappings as $old_key => $new_key) {
@@ -152,7 +152,7 @@ class Img_Panda_Activator
 	{
 		// Clean up any temporary data or scheduled events here
 		// Note: We don't delete settings on deactivation, only on uninstall
-		delete_option('img_panda_activated');
+		delete_option('mkit_si_activated');
 	}
 }
 

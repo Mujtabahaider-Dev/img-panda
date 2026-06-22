@@ -4,7 +4,7 @@
  *
  * Handles all AJAX requests for the plugin.
  *
- * @package Img_Panda
+ * @package Mkit_Si
  */
 
 // Exit if accessed directly
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 /**
  * AJAX Handler Class.
  */
-class Img_Panda_Ajax_Handler
+class Mkit_Si_Ajax_Handler
 {
 
 	/**
@@ -26,31 +26,31 @@ class Img_Panda_Ajax_Handler
 	public function init()
 	{
 		// Bulk conversion actions
-		add_action('wp_ajax_img_panda_start_bulk', array($this, 'start_bulk_conversion'));
-		add_action('wp_ajax_img_panda_process_batch', array($this, 'process_batch'));
-		add_action('wp_ajax_img_panda_pause', array($this, 'pause_conversion'));
-		add_action('wp_ajax_img_panda_resume', array($this, 'resume_conversion'));
-		add_action('wp_ajax_img_panda_stop', array($this, 'stop_conversion'));
+		add_action('wp_ajax_mkit_si_start_bulk', array($this, 'start_bulk_conversion'));
+		add_action('wp_ajax_mkit_si_process_batch', array($this, 'process_batch'));
+		add_action('wp_ajax_mkit_si_pause', array($this, 'pause_conversion'));
+		add_action('wp_ajax_mkit_si_resume', array($this, 'resume_conversion'));
+		add_action('wp_ajax_mkit_si_stop', array($this, 'stop_conversion'));
 
 		// Stats and info
-		add_action('wp_ajax_img_panda_get_stats', array($this, 'get_stats'));
-		add_action('wp_ajax_img_panda_get_progress', array($this, 'get_progress'));
+		add_action('wp_ajax_mkit_si_get_stats', array($this, 'get_stats'));
+		add_action('wp_ajax_mkit_si_get_progress', array($this, 'get_progress'));
 
 		// Tools
-		add_action('wp_ajax_img_panda_test', array($this, 'test_conversion'));
-		add_action('wp_ajax_img_panda_check_server', array($this, 'check_server'));
-		add_action('wp_ajax_img_panda_restore', array($this, 'restore_originals'));
-		add_action('wp_ajax_img_panda_clear_logs', array($this, 'clear_logs'));
-		add_action('wp_ajax_img_panda_export_logs', array($this, 'export_logs'));
+		add_action('wp_ajax_mkit_si_test', array($this, 'test_conversion'));
+		add_action('wp_ajax_mkit_si_check_server', array($this, 'check_server'));
+		add_action('wp_ajax_mkit_si_restore', array($this, 'restore_originals'));
+		add_action('wp_ajax_mkit_si_clear_logs', array($this, 'clear_logs'));
+		add_action('wp_ajax_mkit_si_export_logs', array($this, 'export_logs'));
 
 		// Single image conversion
-		add_action('wp_ajax_img_panda_convert_single', array($this, 'convert_single'));
+		add_action('wp_ajax_mkit_si_convert_single', array($this, 'convert_single'));
 
 		// Settings
-		add_action('wp_ajax_img_panda_save_settings', array($this, 'save_settings'));
+		add_action('wp_ajax_mkit_si_save_settings', array($this, 'save_settings'));
 
 		// AI Testing
-		add_action('wp_ajax_img_panda_test_ai_connection', array($this, 'test_ai_connection'));
+		add_action('wp_ajax_mkit_si_test_ai_connection', array($this, 'test_ai_connection'));
 	}
 
 	/**
@@ -58,32 +58,31 @@ class Img_Panda_Ajax_Handler
 	 */
 	public function test_ai_connection()
 	{
-		check_ajax_referer('img_panda_nonce', 'nonce');
+		check_ajax_referer('mkit_si_nonce', 'nonce');
 		if (!current_user_can('manage_options')) {
-			wp_send_json_error(array('message' => __('Permission denied', 'img-panda')));
+			wp_send_json_error(array('message' => __('Permission denied', 'mak8it-smart-image')));
 		}
 
-		require_once IMG_PANDA_PLUGIN_DIR . 'includes/class-ai-handler.php';
-		$ai = new Img_Panda_AI_Handler();
+		require_once MKIT_SI_PLUGIN_DIR . 'includes/class-ai-handler.php';
+		$ai = new Mkit_Si_AI_Handler();
 		
-		// If testing unsaved settings
 		if (isset($_POST['key']) || isset($_POST['url'])) {
-            $ai->set_test_credentials(
-                isset($_POST['key']) ? sanitize_text_field($_POST['key']) : '',
-                isset($_POST['provider']) ? sanitize_text_field($_POST['provider']) : 'gemini',
-                isset($_POST['model']) ? sanitize_text_field($_POST['model']) : 'gemini-1.5-flash',
-                isset($_POST['url']) ? esc_url_raw(sanitize_text_field($_POST['url'])) : ''
-            );
+			$ai->set_test_credentials(
+				isset($_POST['key']) ? sanitize_text_field(wp_unslash($_POST['key'])) : '',
+				isset($_POST['provider']) ? sanitize_text_field(wp_unslash($_POST['provider'])) : 'gemini',
+				isset($_POST['model']) ? sanitize_text_field(wp_unslash($_POST['model'])) : 'gemini-1.5-flash',
+				isset($_POST['url']) ? esc_url_raw(sanitize_text_field(wp_unslash($_POST['url']))) : ''
+			);
 		}
 		
 		$result = $ai->test_connection();
 
 		if ($result) {
 			wp_send_json_success(array(
-				'message' => __('AI Connection Successful! Response:', 'img-panda') . ' "' . $result . '"'
+				'message' => __('AI Connection Successful! Response:', 'mak8it-smart-image') . ' "' . $result . '"'
 			));
 		} else {
-			$error = get_option('img_panda_ai_last_error', __('Unknown error occurred during connection.', 'img-panda'));
+			$error = get_option('mkit_si_ai_last_error', __('Unknown error occurred during connection.', 'mak8it-smart-image'));
 			wp_send_json_error(array('message' => $error));
 		}
 	}
@@ -95,14 +94,14 @@ class Img_Panda_Ajax_Handler
 	 */
 	public function start_bulk_conversion()
 	{
-		check_ajax_referer('img_panda_nonce', 'nonce');
+		check_ajax_referer('mkit_si_nonce', 'nonce');
 
 		if (!current_user_can('manage_options')) {
-			wp_send_json_error(array('message' => __('Permission denied', 'img-panda')));
+			wp_send_json_error(array('message' => __('Permission denied', 'mak8it-smart-image')));
 		}
 
-		require_once IMG_PANDA_PLUGIN_DIR . 'includes/class-bulk-processor.php';
-		$processor = new Img_Panda_Bulk_Processor();
+		require_once MKIT_SI_PLUGIN_DIR . 'includes/class-bulk-processor.php';
+		$processor = new Mkit_Si_Bulk_Processor();
 
 		// Get filters from request
 		$filters = array();
@@ -114,14 +113,14 @@ class Img_Panda_Ajax_Handler
 		$image_ids = $processor->get_unconverted_images($filters);
 
 		if (empty($image_ids)) {
-			wp_send_json_error(array('message' => __('No images to convert', 'img-panda')));
+			wp_send_json_error(array('message' => __('No images to convert', 'mak8it-smart-image')));
 		}
 
 		// Initialize bulk conversion with all filters
 		$processor->initialize_bulk_conversion($image_ids, $filters);
 
 		wp_send_json_success(array(
-			'message' => __('Bulk conversion started', 'img-panda'),
+			'message' => __('Bulk conversion started', 'mak8it-smart-image'),
 			'total' => count($image_ids),
 		));
 	}
@@ -133,14 +132,14 @@ class Img_Panda_Ajax_Handler
 	 */
 	public function process_batch()
 	{
-		check_ajax_referer('img_panda_nonce', 'nonce');
+		check_ajax_referer('mkit_si_nonce', 'nonce');
 
 		if (!current_user_can('manage_options')) {
-			wp_send_json_error(array('message' => __('Permission denied', 'img-panda')));
+			wp_send_json_error(array('message' => __('Permission denied', 'mak8it-smart-image')));
 		}
 
-		require_once IMG_PANDA_PLUGIN_DIR . 'includes/class-bulk-processor.php';
-		$processor = new Img_Panda_Bulk_Processor();
+		require_once MKIT_SI_PLUGIN_DIR . 'includes/class-bulk-processor.php';
+		$processor = new Mkit_Si_Bulk_Processor();
 
 		$result = $processor->process_next_batch();
 
@@ -158,17 +157,17 @@ class Img_Panda_Ajax_Handler
 	 */
 	public function pause_conversion()
 	{
-		check_ajax_referer('img_panda_nonce', 'nonce');
+		check_ajax_referer('mkit_si_nonce', 'nonce');
 
 		if (!current_user_can('manage_options')) {
-			wp_send_json_error(array('message' => __('Permission denied', 'img-panda')));
+			wp_send_json_error(array('message' => __('Permission denied', 'mak8it-smart-image')));
 		}
 
-		require_once IMG_PANDA_PLUGIN_DIR . 'includes/class-bulk-processor.php';
-		$processor = new Img_Panda_Bulk_Processor();
+		require_once MKIT_SI_PLUGIN_DIR . 'includes/class-bulk-processor.php';
+		$processor = new Mkit_Si_Bulk_Processor();
 		$processor->pause_conversion();
 
-		wp_send_json_success(array('message' => __('Conversion paused', 'img-panda')));
+		wp_send_json_success(array('message' => __('Conversion paused', 'mak8it-smart-image')));
 	}
 
 	/**
@@ -178,17 +177,17 @@ class Img_Panda_Ajax_Handler
 	 */
 	public function resume_conversion()
 	{
-		check_ajax_referer('img_panda_nonce', 'nonce');
+		check_ajax_referer('mkit_si_nonce', 'nonce');
 
 		if (!current_user_can('manage_options')) {
-			wp_send_json_error(array('message' => __('Permission denied', 'img-panda')));
+			wp_send_json_error(array('message' => __('Permission denied', 'mak8it-smart-image')));
 		}
 
-		require_once IMG_PANDA_PLUGIN_DIR . 'includes/class-bulk-processor.php';
-		$processor = new Img_Panda_Bulk_Processor();
+		require_once MKIT_SI_PLUGIN_DIR . 'includes/class-bulk-processor.php';
+		$processor = new Mkit_Si_Bulk_Processor();
 		$processor->resume_conversion();
 
-		wp_send_json_success(array('message' => __('Conversion resumed', 'img-panda')));
+		wp_send_json_success(array('message' => __('Conversion resumed', 'mak8it-smart-image')));
 	}
 
 	/**
@@ -198,17 +197,17 @@ class Img_Panda_Ajax_Handler
 	 */
 	public function stop_conversion()
 	{
-		check_ajax_referer('img_panda_nonce', 'nonce');
+		check_ajax_referer('mkit_si_nonce', 'nonce');
 
 		if (!current_user_can('manage_options')) {
-			wp_send_json_error(array('message' => __('Permission denied', 'img-panda')));
+			wp_send_json_error(array('message' => __('Permission denied', 'mak8it-smart-image')));
 		}
 
-		require_once IMG_PANDA_PLUGIN_DIR . 'includes/class-bulk-processor.php';
-		$processor = new Img_Panda_Bulk_Processor();
+		require_once MKIT_SI_PLUGIN_DIR . 'includes/class-bulk-processor.php';
+		$processor = new Mkit_Si_Bulk_Processor();
 		$processor->stop_conversion();
 
-		wp_send_json_success(array('message' => __('Conversion stopped', 'img-panda')));
+		wp_send_json_success(array('message' => __('Conversion stopped', 'mak8it-smart-image')));
 	}
 
 	/**
@@ -218,15 +217,15 @@ class Img_Panda_Ajax_Handler
 	 */
 	public function get_stats()
 	{
-		check_ajax_referer('img_panda_nonce', 'nonce');
+		check_ajax_referer('mkit_si_nonce', 'nonce');
 
 		if (!current_user_can('manage_options')) {
-			wp_send_json_error(array('message' => __('Permission denied', 'img-panda')));
+			wp_send_json_error(array('message' => __('Permission denied', 'mak8it-smart-image')));
 			return;
 		}
 
-		require_once IMG_PANDA_PLUGIN_DIR . 'includes/class-stats.php';
-		$stats = Img_Panda_Stats::get_stats();
+		require_once MKIT_SI_PLUGIN_DIR . 'includes/class-stats.php';
+		$stats = Mkit_Si_Stats::get_stats();
 
 		wp_send_json_success($stats);
 	}
@@ -238,15 +237,15 @@ class Img_Panda_Ajax_Handler
 	 */
 	public function get_progress()
 	{
-		check_ajax_referer('img_panda_nonce', 'nonce');
+		check_ajax_referer('mkit_si_nonce', 'nonce');
 
 		if (!current_user_can('manage_options')) {
-			wp_send_json_error(array('message' => __('Permission denied', 'img-panda')));
+			wp_send_json_error(array('message' => __('Permission denied', 'mak8it-smart-image')));
 			return;
 		}
 
-		$progress = get_option('img_panda_conversion_progress', array());
-		$status = get_option('img_panda_conversion_status', 'inactive');
+		$progress = get_option('mkit_si_conversion_progress', array());
+		$status = get_option('mkit_si_conversion_status', 'inactive');
 
 		wp_send_json_success(array(
 			'progress' => $progress,
@@ -261,16 +260,16 @@ class Img_Panda_Ajax_Handler
 	 */
 	public function test_conversion()
 	{
-		check_ajax_referer('img_panda_nonce', 'nonce');
+		check_ajax_referer('mkit_si_nonce', 'nonce');
 
 		if (!current_user_can('manage_options')) {
-			wp_send_json_error(array('message' => __('Permission denied', 'img-panda')));
+			wp_send_json_error(array('message' => __('Permission denied', 'mak8it-smart-image')));
 		}
 
 		// This would handle file upload and testing
 		// Implementation similar to test-conversion.php page
 
-		wp_send_json_success(array('message' => __('Test completed', 'img-panda')));
+		wp_send_json_success(array('message' => __('Test completed', 'mak8it-smart-image')));
 	}
 
 	/**
@@ -280,9 +279,9 @@ class Img_Panda_Ajax_Handler
 	 */
 	public function check_server()
 	{
-		check_ajax_referer('img_panda_nonce', 'nonce');
+		check_ajax_referer('mkit_si_nonce', 'nonce');
 
-		$support = Img_Panda_Converter::check_webp_support();
+		$support = Mkit_Si_Converter::check_webp_support();
 
 		$info = array(
 			'webp_support' => $support,
@@ -303,17 +302,17 @@ class Img_Panda_Ajax_Handler
 	 */
 	public function restore_originals()
 	{
-		check_ajax_referer('img_panda_nonce', 'nonce');
+		check_ajax_referer('mkit_si_nonce', 'nonce');
 
 		if (!current_user_can('manage_options')) {
-			wp_send_json_error(array('message' => __('Permission denied', 'img-panda')));
+			wp_send_json_error(array('message' => __('Permission denied', 'mak8it-smart-image')));
 		}
 
 		// Get all images with backups
 		global $wpdb;
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Need fresh data for restore
 		$results = $wpdb->get_results(
-			"SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_img_panda_backup_path'",
+			"SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_mkit_si_backup_path'",
 			ARRAY_A
 		);
 
@@ -329,14 +328,14 @@ class Img_Panda_Ajax_Handler
 
 				if (copy($backup_path, $original_path)) {
 					// Delete WebP file
-					$webp_path = get_post_meta($image_id, '_img_panda_path', true);
+					$webp_path = get_post_meta($image_id, '_mkit_si_path', true);
 					if ($webp_path && file_exists($webp_path)) {
 						wp_delete_file($webp_path);
 					}
 
 					// Update meta
-					delete_post_meta($image_id, '_img_panda_converted');
-					delete_post_meta($image_id, '_img_panda_path');
+					delete_post_meta($image_id, '_mkit_si_converted');
+					delete_post_meta($image_id, '_mkit_si_path');
 
 					$restored++;
 				} else {
@@ -349,7 +348,7 @@ class Img_Panda_Ajax_Handler
 
 		wp_send_json_success(array(
 			/* translators: %1$d: number of restored images, %2$d: number of failed images */
-			'message' => sprintf(__('Restored %1$d images, %2$d failed', 'img-panda'), $restored, $failed),
+			'message' => sprintf(__('Restored %1$d images, %2$d failed', 'mak8it-smart-image'), $restored, $failed),
 			'restored' => $restored,
 			'failed' => $failed,
 		));
@@ -362,16 +361,16 @@ class Img_Panda_Ajax_Handler
 	 */
 	public function clear_logs()
 	{
-		check_ajax_referer('img_panda_nonce', 'nonce');
+		check_ajax_referer('mkit_si_nonce', 'nonce');
 
 		if (!current_user_can('manage_options')) {
-			wp_send_json_error(array('message' => __('Permission denied', 'img-panda')));
+			wp_send_json_error(array('message' => __('Permission denied', 'mak8it-smart-image')));
 		}
 
-		require_once IMG_PANDA_PLUGIN_DIR . 'includes/class-stats.php';
-		Img_Panda_Stats::clear_logs();
+		require_once MKIT_SI_PLUGIN_DIR . 'includes/class-stats.php';
+		Mkit_Si_Stats::clear_logs();
 
-		wp_send_json_success(array('message' => __('Logs cleared', 'img-panda')));
+		wp_send_json_success(array('message' => __('Logs cleared', 'mak8it-smart-image')));
 	}
 
 	/**
@@ -381,17 +380,17 @@ class Img_Panda_Ajax_Handler
 	 */
 	public function export_logs()
 	{
-		check_ajax_referer('img_panda_nonce', 'nonce');
+		check_ajax_referer('mkit_si_nonce', 'nonce');
 
 		if (!current_user_can('manage_options')) {
-			wp_die(esc_html__('Permission denied', 'img-panda'));
+			wp_die(esc_html__('Permission denied', 'mak8it-smart-image'));
 		}
 
-		require_once IMG_PANDA_PLUGIN_DIR . 'includes/class-stats.php';
-		$csv = Img_Panda_Stats::export_logs_csv();
+		require_once MKIT_SI_PLUGIN_DIR . 'includes/class-stats.php';
+		$csv = Mkit_Si_Stats::export_logs_csv();
 
 		header('Content-Type: text/csv');
-		header('Content-Disposition: attachment; filename="img-panda-conversion-logs-' . gmdate('Y-m-d') . '.csv"');
+		header('Content-Disposition: attachment; filename="mkit-si-conversion-logs-' . gmdate('Y-m-d') . '.csv"');
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- CSV output is properly formatted
 		echo $csv;
 		exit;
@@ -404,28 +403,28 @@ class Img_Panda_Ajax_Handler
 	 */
 	public function convert_single()
 	{
-		check_ajax_referer('img_panda_nonce', 'nonce');
+		check_ajax_referer('mkit_si_nonce', 'nonce');
 
 		if (!current_user_can('upload_files')) {
-			wp_send_json_error(array('message' => __('Permission denied', 'img-panda')));
+			wp_send_json_error(array('message' => __('Permission denied', 'mak8it-smart-image')));
 		}
 
 		$image_id = isset($_POST['image_id']) ? intval($_POST['image_id']) : 0;
 
 		if (!$image_id) {
-			wp_send_json_error(array('message' => __('Invalid image ID', 'img-panda')));
+			wp_send_json_error(array('message' => __('Invalid image ID', 'mak8it-smart-image')));
 		}
 
 		$file_path = get_attached_file($image_id);
 
 		if (!$file_path || !file_exists($file_path)) {
-			wp_send_json_error(array('message' => __('File not found', 'img-panda')));
+			wp_send_json_error(array('message' => __('File not found', 'mak8it-smart-image')));
 		}
 
-		require_once IMG_PANDA_PLUGIN_DIR . 'includes/class-converter.php';
-		$converter = new Img_Panda_Converter();
+		require_once MKIT_SI_PLUGIN_DIR . 'includes/class-converter.php';
+		$converter = new Mkit_Si_Converter();
 
-		$settings = get_option('Img_Panda_settings', array());
+		$settings = get_option('Mkit_Si_settings', array());
 		$quality = isset($settings['quality']) ? intval($settings['quality']) : 60;
 
 		$result = $converter->convert_image_to_webp($file_path, $quality);
@@ -435,13 +434,13 @@ class Img_Panda_Ajax_Handler
 			$original_size = filesize($file_path);
 			$webp_size = file_exists($result['webp_path']) ? filesize($result['webp_path']) : 0;
 
-			update_post_meta($image_id, '_img_panda_converted', '1');
-			update_post_meta($image_id, '_img_panda_original_size', $original_size);
-			update_post_meta($image_id, '_img_panda_new_size', $webp_size);
-			update_post_meta($image_id, '_img_panda_path', $result['webp_path']);
+			update_post_meta($image_id, '_mkit_si_converted', '1');
+			update_post_meta($image_id, '_mkit_si_original_size', $original_size);
+			update_post_meta($image_id, '_mkit_si_new_size', $webp_size);
+			update_post_meta($image_id, '_mkit_si_path', $result['webp_path']);
 
 			// Clear stats cache after conversion
-			Img_Panda_Stats::clear_cache();
+			Mkit_Si_Stats::clear_cache();
 
 			wp_send_json_success(array(
 				'message' => $result['message'],
@@ -461,15 +460,15 @@ class Img_Panda_Ajax_Handler
 	 */
 	public function save_settings()
 	{
-		check_ajax_referer('img_panda_nonce', 'nonce');
+		check_ajax_referer('mkit_si_nonce', 'nonce');
 
 		if (!current_user_can('manage_options')) {
-			wp_send_json_error(array('message' => __('Permission denied', 'img-panda')));
+			wp_send_json_error(array('message' => __('Permission denied', 'mak8it-smart-image')));
 		}
 
 		// Validate POST data exists
 		if (!isset($_POST['form_data']) || empty($_POST['form_data'])) {
-			wp_send_json_error(array('message' => __('No data provided', 'img-panda')));
+			wp_send_json_error(array('message' => __('No data provided', 'mak8it-smart-image')));
 		}
 
 		// Parse the serialized form data
@@ -477,26 +476,26 @@ class Img_Panda_Ajax_Handler
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized via parse_str and then sanitize_settings
 		parse_str(wp_unslash($_POST['form_data']), $form_data);
 
-		if (!isset($form_data['Img_Panda_settings'])) {
-			wp_send_json_error(array('message' => __('Invalid settings data', 'img-panda')));
+		if (!isset($form_data['Mkit_Si_settings'])) {
+			wp_send_json_error(array('message' => __('Invalid settings data', 'mak8it-smart-image')));
 		}
 
 		// Use the existing settings class to sanitize and save
-		require_once IMG_PANDA_PLUGIN_DIR . 'includes/class-settings.php';
-		$settings_class = new Img_Panda_Settings();
+		require_once MKIT_SI_PLUGIN_DIR . 'includes/class-settings.php';
+		$settings_class = new Mkit_Si_Settings();
         
         // CRITICAL FIX: Merge raw data with existing settings BEFORE sanitizing
         // This ensures checkboxes and missing fields are handled correctly
-        $existing_settings = get_option('Img_Panda_settings', array());
-        $merged_raw        = array_merge($existing_settings, $form_data['Img_Panda_settings']);
+        $existing_settings = get_option('Mkit_Si_settings', array());
+        $merged_raw        = array_merge($existing_settings, $form_data['Mkit_Si_settings']);
         
 		$final_sanitized = $settings_class->sanitize_settings($merged_raw);
 
-		if (update_option('Img_Panda_settings', $final_sanitized)) {
-			wp_send_json_success(array('message' => __('Settings saved successfully!', 'img-panda')));
+		if (update_option('Mkit_Si_settings', $final_sanitized)) {
+			wp_send_json_success(array('message' => __('Settings saved successfully!', 'mak8it-smart-image')));
 		} else {
 			// update_option returns false if the data is the same, so we count this as success too
-			wp_send_json_success(array('message' => __('Settings updated', 'img-panda')));
+			wp_send_json_success(array('message' => __('Settings updated', 'mak8it-smart-image')));
 		}
 	}
 }

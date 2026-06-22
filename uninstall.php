@@ -1,10 +1,10 @@
 <?php
 /**
- * Uninstall script for Img Panda plugin.
+ * Uninstall script for Mak8it Smart Image plugin.
  *
  * Fired when the plugin is uninstalled (deleted).
  *
- * @package Img_Panda
+ * @package Mkit_Si
  */
 
 // Exit if accessed directly
@@ -13,13 +13,19 @@ if (!defined('WP_UNINSTALL_PLUGIN')) {
 }
 
 // Delete plugin options
-delete_option('Img_Panda_settings');
-delete_option('img_panda_stats');
-delete_option('img_panda_activated');
-delete_option('img_panda_conversion_progress');
-delete_option('img_panda_conversion_status');
-delete_option('img_panda_conversion_queue');
-delete_option('img_panda_conversion_errors');
+delete_option('Mkit_Si_settings');
+delete_option('mkit_si_stats');
+delete_option('mkit_si_activated');
+delete_option('mkit_si_conversion_progress');
+delete_option('mkit_si_conversion_status');
+delete_option('mkit_si_conversion_queue');
+delete_option('mkit_si_conversion_errors');
+
+// Delete plugin transients
+delete_transient('mkit_si_stats_cache');
+delete_transient('mkit_si_conversion_success');
+delete_transient('mkit_si_conversion_error');
+
 
 // Delete all post meta related to WebP conversion
 global $wpdb;
@@ -29,12 +35,12 @@ global $wpdb;
 $wpdb->query(
 	"DELETE FROM {$wpdb->postmeta} 
 	WHERE meta_key IN (
-		'_img_panda_converted',
-		'_img_panda_path',
-		'_img_panda_backup_path',
-		'_img_panda_original_size',
-		'_img_panda_new_size',
-		'_img_panda_conversion_date'
+		'_mkit_si_converted',
+		'_mkit_si_path',
+		'_mkit_si_backup_path',
+		'_mkit_si_original_size',
+		'_mkit_si_new_size',
+		'_mkit_si_conversion_date'
 	)"
 );
 
@@ -47,7 +53,7 @@ $base_dir = $upload_dir['basedir'];
 // Get all WebP files created by the plugin
 $webp_files = $wpdb->get_col(
 	"SELECT meta_value FROM {$wpdb->postmeta} 
-	WHERE meta_key = '_img_panda_path'"
+	WHERE meta_key = '_mkit_si_path'"
 );
 
 foreach ($webp_files as $webp_file) {
@@ -57,7 +63,7 @@ foreach ($webp_files as $webp_file) {
 }
 
 // Clean up backup directory if it exists
-$backup_dir = $base_dir . '/img-panda-backups';
+$backup_dir = $base_dir . '/mkit-si-backups';
 if (is_dir($backup_dir)) {
 	// Recursively delete backup directory
 	$files = new RecursiveIteratorIterator(
@@ -75,7 +81,7 @@ if (is_dir($backup_dir)) {
 */
 
 // Clear any scheduled cron events
-wp_clear_scheduled_hook('img_panda_bulk_cron');
+wp_clear_scheduled_hook('mkit_si_bulk_cron');
 
 // Note: We don't delete converted images by default to preserve user data.
 // Users should manually restore originals if needed before uninstalling.

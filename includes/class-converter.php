@@ -4,7 +4,7 @@
  *
  * Handles the conversion of images to WebP format.
  *
- * @package Img_Panda
+ * @package Mkit_Si
  */
 
 // Exit if accessed directly
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 /**
  * Main Converter Class.
  */
-class Img_Panda_Converter
+class Mkit_Si_Converter
 {
 
 	/**
@@ -33,7 +33,7 @@ class Img_Panda_Converter
 	public function init()
 	{
 		// Load settings
-		$this->settings = get_option('Img_Panda_settings', array());
+		$this->settings = get_option('Mkit_Si_settings', array());
 
 		// Hook into upload process if auto-convert is enabled
 		if (isset($this->settings['auto_convert']) && '1' === $this->settings['auto_convert']) {
@@ -64,7 +64,7 @@ class Img_Panda_Converter
 		if (function_exists('imagewebp') && function_exists('imagecreatefromjpeg') && function_exists('imagecreatefrompng')) {
 			$support['supported'] = true;
 			$support['method'] = 'GD Library';
-			$support['message'] = __('Your server supports WebP conversion using GD Library.', 'img-panda');
+			$support['message'] = __('Your server supports WebP conversion using GD Library.', 'mak8it-smart-image');
 			return $support;
 		}
 
@@ -74,12 +74,12 @@ class Img_Panda_Converter
 			if (in_array('WEBP', $imagick->queryFormats(), true)) {
 				$support['supported'] = true;
 				$support['method'] = 'Imagick';
-				$support['message'] = __('Your server supports WebP conversion using Imagick.', 'img-panda');
+				$support['message'] = __('Your server supports WebP conversion using Imagick.', 'mak8it-smart-image');
 				return $support;
 			}
 		}
 
-		$support['message'] = __('Your server does not support WebP conversion. Please install GD Library with WebP support or Imagick.', 'img-panda');
+		$support['message'] = __('Your server does not support WebP conversion. Please install GD Library with WebP support or Imagick.', 'mak8it-smart-image');
 		return $support;
 	}
 
@@ -103,25 +103,27 @@ class Img_Panda_Converter
 		try {
 			// Check if file exists
 			if (!file_exists($file_path)) {
-				$result['message'] = __('Source file does not exist.', 'img-panda');
+				$result['message'] = __('Source file does not exist.', 'mak8it-smart-image');
 				return $result;
 			}
 
 			// Check size limits
 			$file_size_bytes = filesize($file_path);
-			$settings = get_option('Img_Panda_settings', array());
+			$settings = get_option('Mkit_Si_settings', array());
 			
 			// Min size check (KB to Bytes)
 			$min_size_kb = isset($settings['min_size']) ? intval($settings['min_size']) : 0;
 			if ($min_size_kb > 0 && $file_size_bytes < ($min_size_kb * 1024)) {
-				$result['message'] = sprintf(__('Skipped: Image is smaller than %d KB.', 'img-panda'), $min_size_kb);
+				/* translators: %d: Minimum size in KB */
+				$result['message'] = sprintf(__('Skipped: Image is smaller than %d KB.', 'mak8it-smart-image'), $min_size_kb);
 				return $result;
 			}
 
 			// Max size check (MB to Bytes)
 			$max_size_mb = isset($settings['max_size']) ? intval($settings['max_size']) : 0;
 			if ($max_size_mb > 0 && $file_size_bytes > ($max_size_mb * 1024 * 1024)) {
-				$result['message'] = sprintf(__('Skipped: Image is larger than %d MB.', 'img-panda'), $max_size_mb);
+				/* translators: %d: Maximum size in MB */
+				$result['message'] = sprintf(__('Skipped: Image is larger than %d MB.', 'mak8it-smart-image'), $max_size_mb);
 				return $result;
 			}
 
@@ -144,7 +146,7 @@ class Img_Panda_Converter
 			// Detect JPEG variations and PNG
 			$allowed_exts = array('jpg', 'jpeg', 'png', 'jfif', 'pjpeg', 'pjp');
 			if (!in_array($extension, $allowed_exts, true)) {
-				$result['message'] = __('Unsupported image format for conversion.', 'img-panda');
+				$result['message'] = __('Unsupported image format for conversion.', 'mak8it-smart-image');
 				return $result;
 			}
 
@@ -170,16 +172,16 @@ class Img_Panda_Converter
 				$original_size = filesize($file_path);
 
 				if ($webp_size >= $original_size) {
-					unlink($result['webp_path']); // Delete the "fat" WebP
+					wp_delete_file($result['webp_path']); // Delete the "fat" WebP
 					$result['success'] = false;
-					$result['message'] = __('Original image is already more efficient than WebP. Skipping.', 'img-panda');
+					$result['message'] = __('Original image is already more efficient than WebP. Skipping.', 'mak8it-smart-image');
 					return $result;
 				}
 			}
 		} catch (Exception $e) {
 			$result['message'] = sprintf(
 				/* translators: %s: error message */
-				__('Conversion error: %s', 'img-panda'),
+				__('Conversion error: %s', 'mak8it-smart-image'),
 				$e->getMessage()
 			);
 		}
@@ -218,7 +220,7 @@ class Img_Panda_Converter
 			}
 
 			if (!$image) {
-				$result['message'] = __('Failed to create image resource.', 'img-panda');
+				$result['message'] = __('Failed to create image resource.', 'mak8it-smart-image');
 				return $result;
 			}
 
@@ -226,9 +228,9 @@ class Img_Panda_Converter
 			if (imagewebp($image, $dest_path, $quality)) {
 				$result['success'] = true;
 				$result['webp_path'] = $dest_path;
-				$result['message'] = __('Image successfully converted to WebP.', 'img-panda');
+				$result['message'] = __('Image successfully converted to WebP.', 'mak8it-smart-image');
 			} else {
-				$result['message'] = __('Failed to save WebP image.', 'img-panda');
+				$result['message'] = __('Failed to save WebP image.', 'mak8it-smart-image');
 			}
 
 			// Free memory
@@ -237,7 +239,7 @@ class Img_Panda_Converter
 		} catch (Exception $e) {
 			$result['message'] = sprintf(
 				/* translators: %s: error message */
-				__('GD conversion error: %s', 'img-panda'),
+				__('GD conversion error: %s', 'mak8it-smart-image'),
 				$e->getMessage()
 			);
 		}
@@ -278,9 +280,9 @@ class Img_Panda_Converter
 			if ($image->writeImage($dest_path)) {
 				$result['success'] = true;
 				$result['webp_path'] = $dest_path;
-				$result['message'] = __('Image successfully converted to WebP.', 'img-panda');
+				$result['message'] = __('Image successfully converted to WebP.', 'mak8it-smart-image');
 			} else {
-				$result['message'] = __('Failed to save WebP image.', 'img-panda');
+				$result['message'] = __('Failed to save WebP image.', 'mak8it-smart-image');
 			}
 
 			// Clean up
@@ -290,7 +292,7 @@ class Img_Panda_Converter
 		} catch (Exception $e) {
 			$result['message'] = sprintf(
 				/* translators: %s: error message */
-				__('Imagick conversion error: %s', 'img-panda'),
+				__('Imagick conversion error: %s', 'mak8it-smart-image'),
 				$e->getMessage()
 			);
 		}
@@ -343,7 +345,11 @@ class Img_Panda_Converter
 		$this->debug_log('Starting conversion...');
 
 		// Store original size in a transient to pass to metadata step
-		set_transient('img_panda_size_' . md5(basename($file_path)), filesize($file_path), 60);
+		$file_key = pathinfo($file_path, PATHINFO_FILENAME);
+		$clean_key = preg_replace('/-scaled$/i', '', $file_key);
+		$clean_key = preg_replace('/-\d+$/', '', $clean_key);
+		$clean_key = preg_replace('/-scaled$/i', '', $clean_key);
+		set_transient('mkit_si_size_' . md5($clean_key), filesize($file_path), 60);
 
 		// Get quality setting
 		$quality = isset($this->settings['quality']) ? intval($this->settings['quality']) : 60;
@@ -357,14 +363,14 @@ class Img_Panda_Converter
 
 		// Store conversion result for admin notice
 		if ($conversion_result['success']) {
-			set_transient('img_panda_conversion_success', $conversion_result, 30);
+			set_transient('mkit_si_conversion_success', $conversion_result, 30);
 			$this->debug_log('Conversion successful!');
 
 			// Store original size for metadata step
 			$upload['webp_original_size'] = filesize($file_path);
 			$upload['webp_new_size'] = filesize($conversion_result['webp_path']);
 		} else {
-			set_transient('img_panda_conversion_error', $conversion_result['message'], 30);
+			set_transient('mkit_si_conversion_error', $conversion_result['message'], 30);
 			$this->debug_log('Conversion failed: ' . $conversion_result['message']);
 		}
 
@@ -373,7 +379,7 @@ class Img_Panda_Converter
 			$replace_mode = isset($this->settings['replace_original']) ? $this->settings['replace_original'] : 'keep_both';
 			
 			// Always store original size meta before potentially deleting the file
-			update_post_meta(0, '_img_panda_temp_original_size', filesize($file_path)); // Temporary link
+			update_post_meta(0, '_mkit_si_temp_original_size', filesize($file_path)); // Temporary link
 			
 			if ('replace' === $replace_mode) {
 				// Delete original and use WebP
@@ -412,7 +418,7 @@ class Img_Panda_Converter
 		// Only log if WP_DEBUG and WP_DEBUG_LOG are enabled
 		if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
 			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-			error_log('[Img Panda] ' . $message);
+			error_log('[Mak8it Smart Image] ' . $message);
 		}
 	}
 
@@ -448,28 +454,31 @@ class Img_Panda_Converter
 			$metadata['has_webp'] = true;
 
 			// Update post meta for statistics
-			update_post_meta($attachment_id, '_img_panda_converted', '1');
-			update_post_meta($attachment_id, '_img_panda_path', $webp_path);
-			update_post_meta($attachment_id, '_img_panda_conversion_date', time());
+			update_post_meta($attachment_id, '_mkit_si_converted', '1');
+			update_post_meta($attachment_id, '_mkit_si_path', $webp_path);
+			update_post_meta($attachment_id, '_mkit_si_conversion_date', time());
 
 			// Get sizes for stats
 			$webp_size = filesize($webp_path);
-			update_post_meta($attachment_id, '_img_panda_new_size', $webp_size);
+			update_post_meta($attachment_id, '_mkit_si_new_size', $webp_size);
 
 			// Try to get original size
 			$original_size = 0;
-			$file_name = basename($file_path);
-			$cached_size = get_transient('img_panda_size_' . md5($file_name));
+			$file_key = pathinfo($file_path, PATHINFO_FILENAME);
+			$clean_key = preg_replace('/-scaled$/i', '', $file_key);
+			$clean_key = preg_replace('/-\d+$/', '', $clean_key);
+			$clean_key = preg_replace('/-scaled$/i', '', $clean_key);
+			$cached_size = get_transient('mkit_si_size_' . md5($clean_key));
 			
 			if ($cached_size) {
 				$original_size = intval($cached_size);
-				delete_transient('img_panda_size_' . md5($file_name));
+				delete_transient('mkit_si_size_' . md5($clean_key));
 			} elseif (file_exists($file_path) && $file_path !== $webp_path) {
 				$original_size = filesize($file_path);
 			}
 
 			if ($original_size > 0) {
-				update_post_meta($attachment_id, '_img_panda_original_size', $original_size);
+				update_post_meta($attachment_id, '_mkit_si_original_size', $original_size);
 			}
 
 			// Also update image sizes with WebP versions if they exist
@@ -497,25 +506,25 @@ class Img_Panda_Converter
 	public function show_conversion_notices()
 	{
 		// Check for success notice
-		$success = get_transient('img_panda_conversion_success');
+		$success = get_transient('mkit_si_conversion_success');
 		if ($success) {
 			$webp_file = isset($success['webp_path']) ? basename($success['webp_path']) : '';
 			?>
-			<div class="notice is-dismissible img-panda-toast" style="position: fixed; bottom: 30px; right: 30px; z-index: 999999; background: linear-gradient(135deg, #7c3bed 0%, #a855f7 100%); border: none; border-radius: 12px; padding: 20px 24px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(255,255,255,0.1) inset; margin: 0; max-width: 400px; color: white; display: flex; align-items: center; gap: 16px; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; animation: imgPandaSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;">
-				<div style="position: absolute; right: -20px; top: -20px; opacity: 0.1; pointer-events: none;">
-					<span class="dashicons dashicons-images-alt2" style="font-size: 140px; width: 140px; height: 140px;"></span>
+			<div class="notice is-dismissible mkit-si-toast mkit-si-toast-wrap">
+				<div class="mkit-si-toast-bg-icon">
+					<span class="dashicons dashicons-images-alt2"></span>
 				</div>
-                <div style="background: rgba(255, 255, 255, 0.2); border-radius: 50%; padding: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    <span class="dashicons dashicons-yes-alt" style="color: white; font-size: 24px; width: 24px; height: 24px;"></span>
-                </div>
-				<div style="position: relative; z-index: 1;">
-					<strong style="font-size: 16px; display: block; margin-bottom: 4px; letter-spacing: 0.5px;"><?php esc_html_e('Optimization Successful!', 'img-panda'); ?></strong>
-					<p style="margin: 0; font-size: 13px; opacity: 0.9; line-height: 1.5;">
+				<div class="mkit-si-toast-icon">
+					<span class="dashicons dashicons-yes-alt"></span>
+				</div>
+				<div class="mkit-si-toast-body">
+					<strong><?php esc_html_e('Optimization Successful!', 'mak8it-smart-image'); ?></strong>
+					<p>
 					<?php
 					printf(
 						/* translators: %s: WebP filename */
-						esc_html__('Img Panda successfully converted your image to WebP format: %s', 'img-panda'),
-						'<code style="background: rgba(0,0,0,0.2); border-radius: 6px; padding: 2px 6px; color: #fff; font-size: 11px; border: 1px solid rgba(255,255,255,0.1); margin-top: 4px; display: inline-block;">' . esc_html($webp_file) . '</code>'
+						esc_html__('Mak8it Smart Image successfully converted your image to WebP format: %s', 'mak8it-smart-image'),
+						'<code class="mkit-si-toast-filename">' . esc_html($webp_file) . '</code>'
 					);
 					?>
 					</p>
@@ -524,21 +533,21 @@ class Img_Panda_Converter
 			</div>
 
 			<?php
-			delete_transient('img_panda_conversion_success');
+			delete_transient('mkit_si_conversion_success');
 		}
 
 		// Check for error notice
-		$error = get_transient('img_panda_conversion_error');
+		$error = get_transient('mkit_si_conversion_error');
 		if ($error) {
 			?>
 			<div class="notice notice-error is-dismissible">
 				<p>
-					<strong><?php esc_html_e('WebP Conversion Failed!', 'img-panda'); ?></strong><br>
+					<strong><?php esc_html_e('WebP Conversion Failed!', 'mak8it-smart-image'); ?></strong><br>
 					<?php echo esc_html($error); ?>
 				</p>
 			</div>
 			<?php
-			delete_transient('img_panda_conversion_error');
+			delete_transient('mkit_si_conversion_error');
 		}
 	}
 
@@ -554,7 +563,7 @@ class Img_Panda_Converter
 
 		// Ensure settings are loaded
 		if (empty($this->settings)) {
-			$this->settings = get_option('Img_Panda_settings', array());
+			$this->settings = get_option('Mkit_Si_settings', array());
 		}
 
 		// Check if this attachment is already WebP (might have been replaced)
@@ -615,13 +624,14 @@ class Img_Panda_Converter
 		$this->debug_log('Checking for existing attachment with file: ' . $relative_path);
 
 		// Check if WebP attachment already exists
-		// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key, WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- Required for deduplication check
+		// phpcs:disable WordPress.DB.SlowDBQuery -- Required for deduplication check
 		$existing = get_posts(array(
 			'post_type' => 'attachment',
 			'meta_key' => '_wp_attached_file',
 			'meta_value' => $relative_path,
 			'posts_per_page' => 1,
 		));
+		// phpcs:enable WordPress.DB.SlowDBQuery
 
 		if (!empty($existing)) {
 			$this->debug_log('WebP attachment already exists (ID: ' . $existing[0]->ID . ')');
@@ -660,10 +670,10 @@ class Img_Panda_Converter
 			wp_update_attachment_metadata($webp_id, $webp_metadata);
 
 			// Link WebP to original and protect original from bulk re-processing
-			update_post_meta($webp_id, '_img_panda_original_id', $attachment_id);
-			update_post_meta($attachment_id, '_img_panda_version_id', $webp_id);
-			update_post_meta($attachment_id, '_img_panda_is_original_source', '1');
-            update_post_meta($attachment_id, '_img_panda_converted', '1');
+			update_post_meta($webp_id, '_mkit_si_original_id', $attachment_id);
+			update_post_meta($attachment_id, '_mkit_si_version_id', $webp_id);
+			update_post_meta($attachment_id, '_mkit_si_is_original_source', '1');
+            update_post_meta($attachment_id, '_mkit_si_converted', '1');
 
             // Copy Alt-Text from original if it exists
             $original_alt = get_post_meta($attachment_id, '_wp_attachment_image_alt', true);

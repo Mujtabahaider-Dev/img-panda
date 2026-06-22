@@ -4,7 +4,7 @@
  *
  * Handles communication with AI providers and automatic SEO generation.
  *
- * @package Img_Panda
+ * @package Mkit_Si
  */
 
 // Exit if accessed directly
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 /**
  * AI Handler Class.
  */
-class Img_Panda_AI_Handler
+class Mkit_Si_AI_Handler
 {
 
 	/**
@@ -30,7 +30,7 @@ class Img_Panda_AI_Handler
 	 */
 	public function __construct()
 	{
-		$this->settings = get_option('Img_Panda_settings', array());
+		$this->settings = get_option('Mkit_Si_settings', array());
 	}
 
 	/**
@@ -85,10 +85,6 @@ class Img_Panda_AI_Handler
 	 */
 	public function test_connection()
 	{
-		// 1x1 transparent GIF base64
-		$base64_image = 'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-		$prompt = "What color is this image? Reply with just one word.";
-		
 		$api_key = isset($this->settings['ai_api_key']) ? $this->settings['ai_api_key'] : '';
 		$provider = isset($this->settings['ai_provider']) ? $this->settings['ai_provider'] : 'gemini';
 		
@@ -96,10 +92,12 @@ class Img_Panda_AI_Handler
 			return false;
 		}
 		
+		$prompt = "Ping";
+		
 		if ('gemini' === $provider) {
-			return $this->call_gemini($base64_image, $api_key, $prompt, 'image/gif');
-		} elseif ('openai' === $provider) {
-			return $this->call_openai($base64_image, $api_key, $prompt, 'image/gif');
+			return $this->call_gemini('', $api_key, $prompt);
+		} elseif ('openai' === $provider || 'other' === $provider) {
+			return $this->call_openai('', $api_key, $prompt);
 		}
 		
 		return false;
@@ -134,7 +132,7 @@ class Img_Panda_AI_Handler
 
 			// FINGERPRINT CACHING: Prevent redundant API calls
 			$file_hash = md5_file($file_path);
-			$cache_key = 'img_panda_alt_' . $file_hash;
+			$cache_key = 'mkit_si_alt_' . $file_hash;
 			$cached = get_transient($cache_key);
 
 			if ($cached) {
@@ -156,7 +154,7 @@ class Img_Panda_AI_Handler
 			$alt_text = false;
 			if ('gemini' === $provider) {
 				$alt_text = $this->call_gemini($image_data, $api_key, $prompt, $mime_type);
-			} elseif ('openai' === $provider) {
+			} elseif ('openai' === $provider || 'other' === $provider) {
 				$alt_text = $this->call_openai($image_data, $api_key, $prompt, $mime_type);
 			}
 
@@ -169,7 +167,7 @@ class Img_Panda_AI_Handler
 
 		} catch (Exception $e) {
 			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-			error_log('Img Panda AI Exception: ' . $e->getMessage());
+			error_log('Mak8it Smart Image AI Exception: ' . $e->getMessage());
 		}
 
 		return false;
@@ -191,7 +189,7 @@ class Img_Panda_AI_Handler
 
 		// Production standard: 512px is the sweet spot for Vision AI models
 		$editor->resize(512, 512, false);
-		$temp_file = tempnam(sys_get_temp_dir(), 'panda_ai_');
+		$temp_file = tempnam(sys_get_temp_dir(), 'mkit_si_ai_');
 		$saved = $editor->save($temp_file, 'image/jpeg');
 		
 		if (is_wp_error($saved)) {
@@ -248,13 +246,17 @@ class Img_Panda_AI_Handler
 		}
 		$url = add_query_arg('key', $api_key, $url);
 
+		$parts = array(
+			array('text' => $prompt)
+		);
+		if (!empty($base64_image)) {
+			$parts[] = array('inline_data' => array('mime_type' => $mime_type, 'data' => $base64_image));
+		}
+
 		$body = array(
 			'contents' => array(
 				array(
-					'parts' => array(
-						array('text' => $prompt),
-						array('inline_data' => array('mime_type' => $mime_type, 'data' => $base64_image))
-					)
+					'parts' => $parts
 				)
 			),
 			'safetySettings' => array(
@@ -262,6 +264,9 @@ class Img_Panda_AI_Handler
 				array('category' => 'HARM_CATEGORY_HATE_SPEECH', 'threshold' => 'BLOCK_NONE'),
 				array('category' => 'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'threshold' => 'BLOCK_NONE'),
 				array('category' => 'HARM_CATEGORY_DANGEROUS_CONTENT', 'threshold' => 'BLOCK_NONE'),
+			),
+			'generationConfig' => array(
+				'maxOutputTokens' => empty($base64_image) ? 5 : 50
 			)
 		);
 
@@ -273,19 +278,19 @@ class Img_Panda_AI_Handler
 		));
 
 		if (is_wp_error($response)) {
-			update_option('img_panda_ai_last_error', $response->get_error_message());
+			update_option('mkit_si_ai_last_error', $response->get_error_message());
 			return false;
 		}
 
 		$data = json_decode(wp_remote_retrieve_body($response), true);
 		
 		if (isset($data['error']['message'])) {
-			update_option('img_panda_ai_last_error', $data['error']['message']);
+			update_option('mkit_si_ai_last_error', $data['error']['message']);
 			return false;
 		}
 
 		if (isset($data['candidates'][0]['content']['parts'][0]['text'])) {
-			delete_option('img_panda_ai_last_error');
+			delete_option('mkit_si_ai_last_error');
 			return trim($data['candidates'][0]['content']['parts'][0]['text']);
 		}
 
@@ -303,18 +308,22 @@ class Img_Panda_AI_Handler
 		}
 		$model = isset($this->settings['ai_model']) ? $this->settings['ai_model'] : 'gpt-4o-mini';
 
+		$content = array(
+			array('type' => 'text', 'text' => $prompt)
+		);
+		if (!empty($base64_image)) {
+			$content[] = array('type' => 'image_url', 'image_url' => array('url' => "data:" . $mime_type . ";base64," . $base64_image));
+		}
+
 		$body = array(
 			'model' => $model,
 			'messages' => array(
 				array(
 					'role' => 'user',
-					'content' => array(
-						array('type' => 'text', 'text' => $prompt),
-						array('type' => 'image_url', 'image_url' => array('url' => "data:" . $mime_type . ";base64," . $base64_image))
-					)
+					'content' => $content
 				)
 			),
-			'max_tokens' => 60
+			'max_tokens' => empty($base64_image) ? 5 : 60
 		);
 
 		$response = wp_remote_post($url, array(
@@ -328,19 +337,19 @@ class Img_Panda_AI_Handler
 		));
 
 		if (is_wp_error($response)) {
-			update_option('img_panda_ai_last_error', $response->get_error_message());
+			update_option('mkit_si_ai_last_error', $response->get_error_message());
 			return false;
 		}
 
 		$data = json_decode(wp_remote_retrieve_body($response), true);
 
 		if (isset($data['error']['message'])) {
-			update_option('img_panda_ai_last_error', $data['error']['message']);
+			update_option('mkit_si_ai_last_error', $data['error']['message']);
 			return false;
 		}
 
 		if (isset($data['choices'][0]['message']['content'])) {
-			delete_option('img_panda_ai_last_error');
+			delete_option('mkit_si_ai_last_error');
 			return trim($data['choices'][0]['message']['content']);
 		}
 

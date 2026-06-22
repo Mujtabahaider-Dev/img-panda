@@ -1,7 +1,7 @@
 /**
- * Admin JavaScript for Img Panda
+ * Admin JavaScript for Mak8it Smart Image
  *
- * @package Img_Panda
+ * @package Mkit_Si
  */
 
 (function ($) {
@@ -15,13 +15,14 @@
     initRescanButton();
     initSettingsSave();
     initAiControls();
+    initCopySysInfo();
   });
 
   /**
    * Initialize quality slider
    */
   function initQualitySlider() {
-    $('input[name="Img_Panda_settings[quality]"]').on('input', function() {
+    $('input[name="Mkit_Si_settings[quality]"]').on('input', function() {
         $('#quality-val-display').text($(this).val() + '%');
     });
   }
@@ -31,14 +32,14 @@
    */
   function initSettingsSave() {
     // Single source of truth: the form's submit event
-    $('#img-panda-main-form').on('submit', function(e) {
+    $('#mak8it-smart-image-main-form').on('submit', function(e) {
         e.preventDefault();
         saveAllSettings();
     });
   }
 
   function saveAllSettings() {
-    var $form = $('#img-panda-main-form');
+    var $form = $('#mak8it-smart-image-main-form');
     var $btn = $('button[type="submit"]');
     
     $btn.prop('disabled', true).css('opacity', '0.7');
@@ -47,8 +48,8 @@
         url: ajaxurl,
         type: 'POST',
         data: {
-            action: 'img_panda_save_settings',
-            nonce: imgPandaAdminData.nonce,
+            action: 'mkit_si_save_settings',
+            nonce: mkitSiAdminData.nonce,
             form_data: $form.serialize()
         },
         success: function(response) {
@@ -135,8 +136,8 @@
     $testBtn.on('click', function() {
         var $btn = $(this);
         var originalText = $btn.html();
-        var key = $('input[name="Img_Panda_settings[ai_api_key]"]').val();
-        var url = $('input[name="Img_Panda_settings[ai_api_url]"]').val();
+        var key = $('input[name="Mkit_Si_settings[ai_api_key]"]').val();
+        var url = $('input[name="Mkit_Si_settings[ai_api_url]"]').val();
         
         if (!key && !url) {
             showToast('Please enter an API key or custom URL first', 'error');
@@ -157,8 +158,8 @@
             url: ajaxurl,
             type: 'POST',
             data: {
-                action: 'img_panda_test_ai_connection',
-                nonce: imgPandaAdminData.nonce,
+                action: 'mkit_si_test_ai_connection',
+                nonce: mkitSiAdminData.nonce,
                 key: key,
                 provider: $provider.val(),
                 model: $model.val(),
@@ -193,13 +194,13 @@
 
   function showToast(msg, type) {
     // Remove existing toast if any
-    $('.img-panda-toast-js').remove();
+    $('.mak8it-smart-image-toast-js').remove();
     
     const bgColor = type === 'success' ? 'bg-success' : 'bg-red-500';
     const icon = type === 'success' ? 'check_circle' : 'error';
     
     const $toast = $(`
-        <div class="img-panda-toast-js fixed bottom-8 right-8 z-[9999] flex items-center gap-3 ${bgColor} text-white px-6 py-4 rounded-2xl shadow-2xl transition-all duration-500 translate-y-20 opacity-0 cursor-pointer">
+        <div class="mak8it-smart-image-toast-js fixed bottom-8 right-8 z-[9999] flex items-center gap-3 ${bgColor} text-white px-6 py-4 rounded-2xl shadow-2xl transition-all duration-500 translate-y-20 opacity-0 cursor-pointer">
             <span class="material-symbols-outlined">${icon}</span>
             <span class="font-bold text-sm tracking-tight">${msg}</span>
         </div>
@@ -246,9 +247,9 @@
         url: ajaxurl,
         type: "POST",
         data: {
-          action: "img_panda_check_server",
+          action: "mkit_si_check_server",
           nonce:
-            typeof imgPandaAdminData !== "undefined" ? imgPandaAdminData.nonce : "",
+            typeof mkitSiAdminData !== "undefined" ? mkitSiAdminData.nonce : "",
         },
         success: function (response) {
           if (response.success) {
@@ -279,18 +280,18 @@
    * Initialize Dashboard Chart
    */
   function initDashboardChart() {
-    var ctx = document.getElementById("img-panda-stats-chart");
+    var ctx = document.getElementById("mak8it-smart-image-stats-chart");
     if (
       !ctx ||
       typeof Chart === "undefined" ||
-      typeof imgPandaAdminData === "undefined"
+      typeof mkitSiAdminData === "undefined"
     ) {
       return;
     }
 
-    var total = parseInt(imgPandaAdminData.stats.total);
-    var converted = parseInt(imgPandaAdminData.stats.converted);
-    var pending = parseInt(imgPandaAdminData.stats.pending);
+    var total = parseInt(mkitSiAdminData.stats.total);
+    var converted = parseInt(mkitSiAdminData.stats.converted);
+    var pending = parseInt(mkitSiAdminData.stats.pending);
 
     new Chart(ctx, {
       type: "doughnut",
@@ -317,8 +318,57 @@
     });
   }
 
+  /**
+   * Copy System Info to clipboard
+   */
+  function initCopySysInfo() {
+    $('#btn-copy-sysinfo').on('click', function() {
+        var $btn = $(this);
+        var $text = $btn.find('.btn-text');
+        var $icon = $btn.find('.material-symbols-outlined');
+        var originalText = $text.text();
+        
+        var sysInfoText = $('#sysinfo-text').val();
+        
+        function runFallback() {
+            var $temp = $('<textarea>');
+            $temp.css({
+                position: 'absolute',
+                left: '-9999px',
+                top: '0'
+            });
+            $('body').append($temp);
+            $temp.val(sysInfoText).select();
+            document.execCommand('copy');
+            $temp.remove();
+            
+            $text.text('Copied!');
+            $icon.text('check');
+            setTimeout(function() {
+                $text.text(originalText);
+                $icon.text('content_copy');
+            }, 2000);
+        }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(sysInfoText).then(function() {
+                $text.text('Copied!');
+                $icon.text('check');
+                setTimeout(function() {
+                    $text.text(originalText);
+                    $icon.text('content_copy');
+                }, 2000);
+            }).catch(function() {
+                runFallback();
+            });
+        } else {
+            runFallback();
+        }
+    });
+  }
+
   // Final check for chart on load
-  if ($("#img-panda-stats-chart").length) {
+  if ($("#mak8it-smart-image-stats-chart").length) {
     initDashboardChart();
   }
 })(jQuery);

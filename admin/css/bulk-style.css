@@ -1,17 +1,17 @@
 /**
  * Bulk Converter Styles
  *
- * @package Img_Panda
+ * @package Mkit_Si
  */
 
 /* Main Container */
-.img-panda-bulk-converter-wrap {
+.mak8it-smart-image-bulk-converter-wrap {
   max-width: 1400px;
   margin: 20px 20px 20px 0;
 }
 
 /* Stats Cards */
-.img-panda-stats-cards {
+.mkit-si-stats-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 20px;
@@ -104,19 +104,19 @@
 }
 
 /* Main Content Layout */
-.img-panda-bulk-content {
+.mak8it-smart-image-bulk-content {
   display: grid;
   grid-template-columns: 1fr;
   gap: 20px;
 }
 
-.img-panda-converter-main {
+.mkit-si-converter-main {
   display: grid;
   grid-template-columns: 1fr 320px;
   gap: 20px;
 }
 
-.img-panda-converter-card {
+.mkit-si-converter-card {
   background: #fff;
   border: 1px solid #dcdcde;
   border-radius: 8px;
@@ -124,7 +124,7 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-.img-panda-converter-card h2 {
+.mkit-si-converter-card h2 {
   margin: 0 0 20px 0;
   font-size: 20px;
   font-weight: 600;
@@ -676,7 +676,7 @@
 }
 
 /* Sidebar */
-.img-panda-converter-sidebar {
+.mkit-si-converter-sidebar {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -781,18 +781,18 @@
 
 /* Responsive Design */
 @media screen and (max-width: 1200px) {
-  .img-panda-converter-main {
+  .mkit-si-converter-main {
     grid-template-columns: 1fr;
   }
 
-  .img-panda-converter-sidebar {
+  .mkit-si-converter-sidebar {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   }
 }
 
 @media screen and (max-width: 768px) {
-  .img-panda-stats-cards {
+  .mkit-si-stats-cards {
     grid-template-columns: 1fr;
   }
 

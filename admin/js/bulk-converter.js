@@ -1,7 +1,7 @@
 /**
  * Bulk Converter JavaScript
  *
- * @package Img_Panda
+ * @package Mkit_Si
  */
 
 (function ($) {
@@ -126,7 +126,7 @@
       $summary.html("<strong>Active:</strong> " + filters.join(" • "));
       $summary.parent().addClass("has-filters");
     } else {
-      $summary.text(imgPandaBulkData.strings.noFilters || "No filters applied");
+      $summary.text(mkitSiBulkData.strings.noFilters || "No filters applied");
       $summary.parent().removeClass("has-filters");
     }
   }
@@ -161,15 +161,15 @@
     $("#btn-stop-conversion").show();
 
     // Show status
-    updateStatus(imgPandaBulkData.strings.startingConversion, "info");
+    updateStatus(mkitSiBulkData.strings.startingConversion, "info");
 
     // AJAX call to start conversion
     $.ajax({
-      url: imgPandaBulkData.ajaxUrl,
+      url: mkitSiBulkData.ajaxUrl,
       type: "POST",
       data: {
-        action: "img_panda_start_bulk",
-        nonce: imgPandaBulkData.nonce,
+        action: "mkit_si_start_bulk",
+        nonce: mkitSiBulkData.nonce,
         filters: filters,
         generate_alt: filters.generate_alt,
       },
@@ -197,7 +197,7 @@
         }
       },
       error: function () {
-        showError(imgPandaBulkData.strings.error);
+        showError(mkitSiBulkData.strings.error);
         resetUI();
       },
     });
@@ -211,14 +211,14 @@
       return;
     }
 
-    updateStatus(imgPandaBulkData.strings.processing, "info");
+    updateStatus(mkitSiBulkData.strings.processing, "info");
 
     $.ajax({
-      url: imgPandaBulkData.ajaxUrl,
+      url: mkitSiBulkData.ajaxUrl,
       type: "POST",
       data: {
-        action: "img_panda_process_batch",
-        nonce: imgPandaBulkData.nonce,
+        action: "mkit_si_process_batch",
+        nonce: mkitSiBulkData.nonce,
       },
       success: function (response) {
         if (response.success) {
@@ -274,7 +274,7 @@
           }
         } else {
           if (data.status === "paused") {
-            updateStatus(imgPandaBulkData.strings.paused, "warning");
+            updateStatus(mkitSiBulkData.strings.paused, "warning");
           } else {
             showError(data.message || "Processing error");
             resetUI();
@@ -282,7 +282,7 @@
         }
       },
       error: function () {
-        showError(imgPandaBulkData.strings.error);
+        showError(mkitSiBulkData.strings.error);
         resetUI();
       },
     });
@@ -295,17 +295,17 @@
     conversionPaused = true;
 
     $.ajax({
-      url: imgPandaBulkData.ajaxUrl,
+      url: mkitSiBulkData.ajaxUrl,
       type: "POST",
       data: {
-        action: "img_panda_pause",
-        nonce: imgPandaBulkData.nonce,
+        action: "mkit_si_pause",
+        nonce: mkitSiBulkData.nonce,
       },
       success: function (response) {
         if (response.success) {
           $("#btn-pause-conversion").hide();
           $("#btn-resume-conversion").show();
-          updateStatus(imgPandaBulkData.strings.paused, "warning");
+          updateStatus(mkitSiBulkData.strings.paused, "warning");
           addLog("⏸ Conversion paused", "warning");
         }
       },
@@ -319,17 +319,17 @@
     conversionPaused = false;
 
     $.ajax({
-      url: imgPandaBulkData.ajaxUrl,
+      url: mkitSiBulkData.ajaxUrl,
       type: "POST",
       data: {
-        action: "img_panda_resume",
-        nonce: imgPandaBulkData.nonce,
+        action: "mkit_si_resume",
+        nonce: mkitSiBulkData.nonce,
       },
       success: function (response) {
         if (response.success) {
           $("#btn-resume-conversion").hide();
           $("#btn-pause-conversion").show();
-          updateStatus(imgPandaBulkData.strings.processing, "info");
+          updateStatus(mkitSiBulkData.strings.processing, "info");
           addLog("▶ Conversion resumed", "success");
           processBatch();
         }
@@ -341,22 +341,22 @@
    * Stop conversion
    */
   function stopConversion() {
-    if (!confirm(imgPandaBulkData.strings.confirmStop)) {
+    if (!confirm(mkitSiBulkData.strings.confirmStop)) {
       return;
     }
 
     $.ajax({
-      url: imgPandaBulkData.ajaxUrl,
+      url: mkitSiBulkData.ajaxUrl,
       type: "POST",
       data: {
-        action: "img_panda_stop",
-        nonce: imgPandaBulkData.nonce,
+        action: "mkit_si_stop",
+        nonce: mkitSiBulkData.nonce,
       },
       success: function (response) {
         if (response.success) {
           conversionActive = false;
           conversionPaused = false;
-          updateStatus(imgPandaBulkData.strings.stopped, "error");
+          updateStatus(mkitSiBulkData.strings.stopped, "error");
           addLog("■ Conversion stopped by user", "error");
           resetUI();
         }
@@ -370,7 +370,7 @@
   function conversionComplete(progress) {
     conversionActive = false;
 
-    updateStatus(imgPandaBulkData.strings.completed, "success");
+    updateStatus(mkitSiBulkData.strings.completed, "success");
     addLog("✓ Bulk conversion completed!", "success");
     addLog(
       "Processed: " +

@@ -2,7 +2,7 @@
 /**
  * System Information Page.
  *
- * @package Img_Panda
+ * @package Mkit_Si
  */
 
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- Template variables
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 /**
  * Get detailed WebP support information
  */
-function img_panda_get_detailed_info()
+function mkit_si_get_detailed_info()
 {
 	$info = array();
 	$info['php_version'] = PHP_VERSION;
@@ -39,19 +39,19 @@ function img_panda_get_detailed_info()
 	return $info;
 }
 
-$detailed_info = img_panda_get_detailed_info();
-$support = Img_Panda_Converter::check_webp_support();
+$detailed_info = mkit_si_get_detailed_info();
+$support = Mkit_Si_Converter::check_webp_support();
 $has_webp = $support['supported'];
 
-require_once IMG_PANDA_PLUGIN_DIR . 'admin/header.php';
+require_once MKIT_SI_PLUGIN_DIR . 'admin/header.php';
 ?>
 
 <main class="max-w-[1200px] mx-auto w-full px-6 py-10 flex flex-col gap-10">
 	<!-- Headline -->
 	<div class="flex flex-col gap-1">
-		<h2 class="text-3xl font-bold tracking-tight"><?php esc_html_e('System Status', 'img-panda'); ?></h2>
+		<h2 class="text-3xl font-bold tracking-tight"><?php esc_html_e('System Status', 'mak8it-smart-image'); ?></h2>
 		<p class="opacity-60 text-base">
-			<?php esc_html_e('Check your server environment for WebP support.', 'img-panda'); ?>
+			<?php esc_html_e('Check your server environment for WebP support.', 'mak8it-smart-image'); ?>
 		</p>
 	</div>
 
@@ -64,10 +64,10 @@ require_once IMG_PANDA_PLUGIN_DIR . 'admin/header.php';
 					class="material-symbols-outlined text-[80px]"><?php echo esc_html($has_webp ? 'verified' : 'warning'); ?></span>
 			</div>
 			<p class="text-sm font-medium opacity-60 mb-1 uppercase tracking-wider">
-				<?php esc_html_e('Engine Status', 'img-panda'); ?>
+				<?php esc_html_e('Engine Status', 'mak8it-smart-image'); ?>
 			</p>
 			<h3 class="text-2xl font-bold mb-2">
-				<?php echo $has_webp ? esc_html__('Ready', 'img-panda') : esc_html__('Action Needed', 'img-panda'); ?>
+				<?php echo $has_webp ? esc_html__('Ready', 'mak8it-smart-image') : esc_html__('Action Needed', 'mak8it-smart-image'); ?>
 			</h3>
 		</div>
 
@@ -76,10 +76,10 @@ require_once IMG_PANDA_PLUGIN_DIR . 'admin/header.php';
 				<span class="material-symbols-outlined text-[80px]">memory</span>
 			</div>
 			<p class="text-sm font-medium opacity-60 mb-1 uppercase tracking-wider">
-				<?php esc_html_e('GD Library', 'img-panda'); ?>
+				<?php esc_html_e('GD Library', 'mak8it-smart-image'); ?>
 			</p>
 			<h3 class="text-2xl font-bold mb-2">
-				<?php echo $detailed_info['gd_loaded'] ? esc_html__('Enabled', 'img-panda') : esc_html__('Missing', 'img-panda'); ?>
+				<?php echo $detailed_info['gd_loaded'] ? esc_html__('Enabled', 'mak8it-smart-image') : esc_html__('Missing', 'mak8it-smart-image'); ?>
 			</h3>
 		</div>
 
@@ -88,10 +88,10 @@ require_once IMG_PANDA_PLUGIN_DIR . 'admin/header.php';
 				<span class="material-symbols-outlined text-[80px]">auto_awesome</span>
 			</div>
 			<p class="text-sm font-medium opacity-60 mb-1 uppercase tracking-wider">
-				<?php esc_html_e('Imagick', 'img-panda'); ?>
+				<?php esc_html_e('Imagick', 'mak8it-smart-image'); ?>
 			</p>
 			<h3 class="text-2xl font-bold mb-2">
-				<?php echo $detailed_info['imagick_loaded'] ? esc_html__('Active', 'img-panda') : esc_html__('Optional', 'img-panda'); ?>
+				<?php echo $detailed_info['imagick_loaded'] ? esc_html__('Active', 'mak8it-smart-image') : esc_html__('Optional', 'mak8it-smart-image'); ?>
 			</h3>
 		</div>
 
@@ -100,7 +100,7 @@ require_once IMG_PANDA_PLUGIN_DIR . 'admin/header.php';
 				<span class="material-symbols-outlined text-[80px]">code</span>
 			</div>
 			<p class="text-sm font-medium opacity-60 mb-1 uppercase tracking-wider">
-				<?php esc_html_e('PHP Version', 'img-panda'); ?>
+				<?php esc_html_e('PHP Version', 'mak8it-smart-image'); ?>
 			</p>
 			<h3 class="text-2xl font-bold mb-2"><?php echo esc_html($detailed_info['php_version']); ?></h3>
 		</div>
@@ -112,7 +112,7 @@ require_once IMG_PANDA_PLUGIN_DIR . 'admin/header.php';
 			<div class="glass-card rounded-3xl p-8 shadow-sm">
 				<div class="flex items-center gap-3 mb-8">
 					<span class="material-symbols-outlined text-primary">terminal</span>
-					<h4 class="text-xl font-bold"><?php esc_html_e('Server Environment', 'img-panda'); ?></h4>
+					<h4 class="text-xl font-bold"><?php esc_html_e('Server Environment', 'mak8it-smart-image'); ?></h4>
 				</div>
 
 				<div class="overflow-hidden rounded-2xl border border-[#f2f0f4] dark:border-white/5">
@@ -120,13 +120,13 @@ require_once IMG_PANDA_PLUGIN_DIR . 'admin/header.php';
 						<thead class="bg-[#f2f0f4]/30 dark:bg-white/5">
 							<tr>
 								<th class="p-4 text-xs font-bold uppercase tracking-widest opacity-40">
-									<?php esc_html_e('Component', 'img-panda'); ?>
+									<?php esc_html_e('Component', 'mak8it-smart-image'); ?>
 								</th>
 								<th class="p-4 text-xs font-bold uppercase tracking-widest opacity-40">
-									<?php esc_html_e('Status', 'img-panda'); ?>
+									<?php esc_html_e('Status', 'mak8it-smart-image'); ?>
 								</th>
 								<th class="p-4 text-xs font-bold uppercase tracking-widest opacity-40">
-									<?php esc_html_e('WebP Support', 'img-panda'); ?>
+									<?php esc_html_e('WebP Support', 'mak8it-smart-image'); ?>
 								</th>
 							</tr>
 						</thead>
@@ -158,10 +158,10 @@ require_once IMG_PANDA_PLUGIN_DIR . 'admin/header.php';
 						<span class="material-symbols-outlined text-red-500">warning</span>
 						<div>
 							<h4 class="font-bold text-red-900 mb-1">
-								<?php esc_html_e('Correction Required', 'img-panda'); ?>
+								<?php esc_html_e('Correction Required', 'mak8it-smart-image'); ?>
 							</h4>
 							<p class="text-sm text-red-700">
-								<?php esc_html_e('Your server currently lacks WebP image processing capabilities. Please contact your host or server administrator to enable the GD or Imagick PHP extensions with WebP support.', 'img-panda'); ?>
+								<?php esc_html_e('Your server currently lacks WebP image processing capabilities. Please contact your host or server administrator to enable the GD or Imagick PHP extensions with WebP support.', 'mak8it-smart-image'); ?>
 							</p>
 						</div>
 					</div>
@@ -169,11 +169,11 @@ require_once IMG_PANDA_PLUGIN_DIR . 'admin/header.php';
 					<div class="mt-8 p-6 bg-success/5 border border-success/10 rounded-2xl flex gap-4">
 						<span class="material-symbols-outlined text-success">check_circle</span>
 						<div>
-							<h4 class="font-bold text-success mb-1"><?php esc_html_e('System Ready', 'img-panda'); ?></h4>
+							<h4 class="font-bold text-success mb-1"><?php esc_html_e('System Ready', 'mak8it-smart-image'); ?></h4>
 							<p class="text-sm opacity-70">
 								<?php
 								/* translators: %s: Conversion engine name (GD or Imagick) */
-								printf(esc_html__('Great news! Your server is perfectly configured to use the %s engine for optimizations.', 'img-panda'), '<strong>' . esc_html($support['method']) . '</strong>');
+								printf(esc_html__('Great news! Your server is perfectly configured to use the %s engine for optimizations.', 'mak8it-smart-image'), '<strong>' . esc_html($support['method']) . '</strong>');
 								?>
 							</p>
 						</div>
@@ -185,34 +185,75 @@ require_once IMG_PANDA_PLUGIN_DIR . 'admin/header.php';
 		<!-- Right Col: Support -->
 		<div class="flex flex-col gap-6">
 			<div class="glass-card rounded-3xl p-8 shadow-sm">
-				<h4 class="text-lg font-bold mb-6"><?php esc_html_e('Server Specs', 'img-panda'); ?></h4>
+				<h4 class="text-lg font-bold mb-6"><?php esc_html_e('Server Specs', 'mak8it-smart-image'); ?></h4>
 				<ul class="space-y-4">
 					<li class="flex justify-between text-sm">
-						<span class="opacity-50"><?php esc_html_e('Memory Limit', 'img-panda'); ?></span>
+						<span class="opacity-50"><?php esc_html_e('Memory Limit', 'mak8it-smart-image'); ?></span>
 						<span class="font-bold"><?php echo esc_html(ini_get('memory_limit')); ?></span>
 					</li>
 					<li class="flex justify-between text-sm">
-						<span class="opacity-50"><?php esc_html_e('Max Upload', 'img-panda'); ?></span>
+						<span class="opacity-50"><?php esc_html_e('Max Upload', 'mak8it-smart-image'); ?></span>
 						<span class="font-bold"><?php echo esc_html(size_format(wp_max_upload_size())); ?></span>
 					</li>
 					<li class="flex justify-between text-sm">
-						<span class="opacity-50"><?php esc_html_e('Active Engine', 'img-panda'); ?></span>
+						<span class="opacity-50"><?php esc_html_e('Active Engine', 'mak8it-smart-image'); ?></span>
 						<span class="font-bold text-primary"><?php echo esc_html($support['method']); ?></span>
 					</li>
 				</ul>
 			</div>
 
 			<div class="glass-card rounded-3xl p-8 shadow-sm">
-				<h4 class="text-lg font-bold mb-4"><?php esc_html_e('Refresh Status', 'img-panda'); ?></h4>
+				<h4 class="text-lg font-bold mb-4"><?php esc_html_e('Refresh Status', 'mak8it-smart-image'); ?></h4>
 				<p class="text-sm opacity-60 mb-6">
-					<?php esc_html_e('Changed your server settings? Click below to re-scan.', 'img-panda'); ?>
+					<?php esc_html_e('Changed your server settings? Click below to re-scan.', 'mak8it-smart-image'); ?>
 				</p>
 				<button type="button" id="btn-rescan-server"
 					class="w-full bg-[#f2f0f4] dark:bg-white/5 hover:bg-primary hover:text-white py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2">
 					<span class="material-symbols-outlined text-sm">refresh</span>
-					<span class="btn-text"><?php esc_html_e('Re-scan Server', 'img-panda'); ?></span>
+					<span class="btn-text"><?php esc_html_e('Re-scan Server', 'mak8it-smart-image'); ?></span>
 				</button>
 				<p id="rescan-status" class="text-xs mt-3 text-center opacity-60"></p>
+			</div>
+
+			<div class="glass-card rounded-3xl p-8 shadow-sm mt-6">
+				<h4 class="text-lg font-bold mb-4"><?php esc_html_e('Report a Bug / Support', 'mak8it-smart-image'); ?></h4>
+				<p class="text-sm opacity-60 mb-6">
+					<?php esc_html_e('Found a bug or need assistance? Visit our official WordPress.org support forum. You can copy your system details below to help us troubleshoot faster.', 'mak8it-smart-image'); ?>
+				</p>
+				
+				<div class="flex flex-col gap-3">
+					<button type="button" id="btn-copy-sysinfo"
+						class="w-full bg-[#f2f0f4] dark:bg-white/5 hover:bg-primary hover:text-white py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2">
+						<span class="material-symbols-outlined text-sm">content_copy</span>
+						<span class="btn-text"><?php esc_html_e('Copy System Details', 'mak8it-smart-image'); ?></span>
+					</button>
+					
+					<a href="https://wordpress.org/support/plugin/mak8it-smart-image/" target="_blank" rel="noopener noreferrer"
+						class="w-full bg-primary text-white text-center hover:bg-opacity-90 py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2" style="text-decoration:none;">
+						<span class="material-symbols-outlined text-sm">contact_support</span>
+						<?php esc_html_e('Visit Support Forum ↗', 'mak8it-smart-image'); ?>
+					</a>
+				</div>
+				
+				<!-- Hidden textarea for copying system details -->
+				<textarea id="sysinfo-text" class="hidden" style="display:none;"><?php
+					global $wp_version;
+					$sysinfo = array(
+						'Plugin Name'       => 'Mak8it Smart Image',
+						'Plugin Version'    => MKIT_SI_VERSION,
+						'WordPress Version' => $wp_version,
+						'PHP Version'       => PHP_VERSION,
+						'GD Library'        => $detailed_info['gd_loaded'] ? 'Enabled (WebP: ' . ($detailed_info['gd_webp'] ? 'Yes' : 'No') . ')' : 'Disabled',
+						'Imagick'           => $detailed_info['imagick_loaded'] ? 'Enabled (WebP: ' . ($detailed_info['imagick_webp'] ? 'Yes' : 'No') . ')' : 'Disabled',
+						'Active Engine'     => $support['method'],
+						'Memory Limit'      => ini_get('memory_limit'),
+						'Max Upload Size'   => size_format(wp_max_upload_size()),
+						'User Agent'        => isset($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT'])) : 'N/A',
+					);
+					foreach ( $sysinfo as $key => $val ) {
+						echo esc_html( "$key: $val\n" );
+					}
+				?></textarea>
 			</div>
 		</div>
 	</div>
@@ -223,12 +264,12 @@ require_once IMG_PANDA_PLUGIN_DIR . 'admin/header.php';
 		<p class="text-sm opacity-40 font-medium">
 			<?php
 			/* translators: %s: Current year */
-			printf(esc_html__('© %s Img Panda. All rights reserved.', 'img-panda'), esc_html(gmdate('Y')));
+			printf(esc_html__('© %s Mak8it Smart Image. All rights reserved.', 'mak8it-smart-image'), esc_html(gmdate('Y')));
 			?>
 		</p>
 		<p class="text-sm opacity-40 font-medium">
-			<?php esc_html_e('Made with', 'img-panda'); ?> <span class="text-red-500">♥</span>
-			<?php esc_html_e('by', 'img-panda'); ?>
+			<?php esc_html_e('Made with', 'mak8it-smart-image'); ?> <span class="text-red-500">♥</span>
+			<?php esc_html_e('by', 'mak8it-smart-image'); ?>
 			<a href="https://mak8it.com" target="_blank" rel="noopener noreferrer"
 				class="text-primary hover:opacity-100 font-bold">Mak8it.com</a>
 		</p>

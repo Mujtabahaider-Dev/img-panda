@@ -2,5 +2,5 @@
 /**
  * Silence is golden.
  *
- * @package Img_Panda
+ * @package Mkit_Si
  */

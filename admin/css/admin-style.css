@@ -1,55 +1,55 @@
 /**
- * Admin Styles for Img Panda
+ * Admin Styles for Mak8it Smart Image
  *
- * @package Img_Panda
+ * @package Mkit_Si
  */
 
 :root {
-  --img-panda-primary: #7c3bed; /* Matching Img Panda brand purple */
-  --img-panda-primary-light: #a855f7; /* Lighter purple */
-  --img-panda-success: #10b981; /* Emerald 500 */
-  --img-panda-warning: #f59e0b; /* Amber 500 */
-  --img-panda-danger: #ef4444; /* Red 500 */
-  --img-panda-bg: #faf8fc; /* Light purple tint */
-  --img-panda-card-bg: #ffffff;
-  --img-panda-text-main: #131118; /* Dark text */
-  --img-panda-text-muted: #64748b; /* Slate 500 */
-  --img-panda-border: #f2f0f4; /* Light border */
-  --img-panda-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --img-panda-shadow-lg:
+  --mkit-si-primary: #7c3bed; /* Matching Mak8it Smart Image brand purple */
+  --mkit-si-primary-light: #a855f7; /* Lighter purple */
+  --mkit-si-success: #10b981; /* Emerald 500 */
+  --mkit-si-warning: #f59e0b; /* Amber 500 */
+  --mkit-si-danger: #ef4444; /* Red 500 */
+  --mkit-si-bg: #faf8fc; /* Light purple tint */
+  --mkit-si-card-bg: #ffffff;
+  --mkit-si-text-main: #131118; /* Dark text */
+  --mkit-si-text-muted: #64748b; /* Slate 500 */
+  --mkit-si-border: #f2f0f4; /* Light border */
+  --mkit-si-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --mkit-si-shadow-lg:
     0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
-.img-panda-bulk-converter-wrap {
+.mak8it-smart-image-bulk-converter-wrap {
   margin: 20px 20px 0 0;
   font-family:
     -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu,
     Cantarell, "Helvetica Neue", sans-serif;
-  color: var(--img-panda-text-main);
+  color: var(--mkit-si-text-main);
 }
 
 /* Header Section */
-.img-panda-admin-header {
-  background: var(--img-panda-card-bg);
+.mkit-si-admin-header {
+  background: var(--mkit-si-card-bg);
   border-radius: 12px;
   padding: 0;
   margin-bottom: 32px;
-  box-shadow: var(--img-panda-shadow);
-  border: 1px solid var(--img-panda-border);
+  box-shadow: var(--mkit-si-shadow);
+  border: 1px solid var(--mkit-si-border);
   display: block; /* Stacked for SaaS look */
   position: relative;
   overflow: hidden;
 }
 
-.img-panda-header-top {
+.mkit-si-header-top {
   padding: 24px 32px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid var(--img-panda-border);
+  border-bottom: 1px solid var(--mkit-si-border);
 }
 
-.img-panda-header-accent {
+.mkit-si-header-accent {
   position: absolute;
   top: 0;
   left: 0;
@@ -57,58 +57,58 @@
   height: 3px;
   background: linear-gradient(
     90deg,
-    var(--img-panda-primary),
-    var(--img-panda-primary-light)
+    var(--mkit-si-primary),
+    var(--mkit-si-primary-light)
   );
 }
 
-.img-panda-branding {
+.mkit-si-branding {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-.img-panda-logo-box {
+.mkit-si-logo-box {
   width: 48px;
   height: 48px;
-  background: var(--img-panda-bg);
-  color: var(--img-panda-primary);
+  background: var(--mkit-si-bg);
+  color: var(--mkit-si-primary);
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--img-panda-border);
+  border: 1px solid var(--mkit-si-border);
 }
 
-.img-panda-logo-box .dashicons {
+.mkit-si-logo-box .dashicons {
   font-size: 24px;
   width: 24px;
   height: 24px;
 }
 
-.img-panda-title-group h1 {
+.mkit-si-title-group h1 {
   font-size: 20px;
   font-weight: 800;
-  color: var(--img-panda-text-main);
+  color: var(--mkit-si-text-main);
   margin: 0;
   letter-spacing: -0.02em;
 }
 
-.img-panda-title-group p {
+.mkit-si-title-group p {
   font-size: 13px;
-  color: var(--img-panda-text-muted);
+  color: var(--mkit-si-text-muted);
   margin: 0;
   font-weight: 400;
 }
 
-.img-panda-nav {
+.mkit-si-nav {
   display: flex;
   padding: 0 24px;
   gap: 24px;
   background: #fff;
 }
 
-.img-panda-nav-item {
+.mkit-si-nav-item {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -117,36 +117,36 @@
   font-size: 14px;
   text-decoration: none;
   transition: all 0.2s ease;
-  color: var(--img-panda-text-muted);
+  color: var(--mkit-si-text-muted);
   border-bottom: 2px solid transparent;
   margin-bottom: -1px; /* Align with header bottom border if needed */
 }
 
-.img-panda-nav-item:hover {
-  color: var(--img-panda-primary);
+.mkit-si-nav-item:hover {
+  color: var(--mkit-si-primary);
 }
 
-.img-panda-nav-item.active {
-  color: var(--img-panda-primary);
-  border-bottom-color: var(--img-panda-primary);
+.mkit-si-nav-item.active {
+  color: var(--mkit-si-primary);
+  border-bottom-color: var(--mkit-si-primary);
 }
 
-.img-panda-nav-item:hover {
+.mkit-si-nav-item:hover {
   background: #fff;
-  color: var(--img-panda-primary);
-  border-color: var(--img-panda-primary);
+  color: var(--mkit-si-primary);
+  border-color: var(--mkit-si-primary);
   transform: translateY(-1px);
 }
 
-.img-panda-nav-item.active {
-  background: var(--img-panda-primary);
+.mkit-si-nav-item.active {
+  background: var(--mkit-si-primary);
   color: #fff;
-  border-color: var(--img-panda-primary);
+  border-color: var(--mkit-si-primary);
   box-shadow: 0 4px 12px rgba(67, 56, 202, 0.3);
 }
 
 /* Dashboard Grid */
-.img-panda-dashboard-grid {
+.mkit-si-dashboard-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 24px;
@@ -154,7 +154,7 @@
 }
 
 /* Stats Cards */
-.img-panda-stats-cards {
+.mkit-si-stats-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 20px;
@@ -162,10 +162,10 @@
 }
 
 .stat-card {
-  background: var(--img-panda-card-bg);
+  background: var(--mkit-si-card-bg);
   padding: 24px;
   border-radius: 16px;
-  border: 1px solid var(--img-panda-border);
+  border: 1px solid var(--mkit-si-border);
   display: flex;
   align-items: center;
   gap: 20px;
@@ -176,7 +176,7 @@
 
 .stat-card:hover {
   transform: translateY(-4px);
-  box-shadow: var(--img-panda-shadow-lg);
+  box-shadow: var(--mkit-si-shadow-lg);
 }
 
 .stat-icon {
@@ -187,7 +187,7 @@
   align-items: center;
   justify-content: center;
   background: #f1f5f9;
-  color: var(--img-panda-primary);
+  color: var(--mkit-si-primary);
 }
 
 .stat-icon .dashicons {
@@ -198,27 +198,27 @@
 
 .stat-card.success .stat-icon {
   background: #ecfdf5;
-  color: var(--img-panda-success);
+  color: var(--mkit-si-success);
 }
 .stat-card.warning .stat-icon {
   background: #fffbeb;
-  color: var(--img-panda-warning);
+  color: var(--mkit-si-warning);
 }
 .stat-card.info .stat-icon {
   background: #e0e7ff;
-  color: var(--img-panda-primary);
+  color: var(--mkit-si-primary);
 }
 
 .stat-value {
   font-size: 24px;
   font-weight: 700;
-  color: var(--img-panda-text-main);
+  color: var(--mkit-si-text-main);
   line-height: 1;
 }
 
 .stat-label {
   font-size: 13px;
-  color: var(--img-panda-text-muted);
+  color: var(--mkit-si-text-muted);
   margin-top: 4px;
   font-weight: 500;
   text-transform: uppercase;
@@ -226,28 +226,28 @@
 }
 
 /* Standard Premium Card */
-.img-panda-converter-card {
-  background: var(--img-panda-card-bg);
+.mkit-si-converter-card {
+  background: var(--mkit-si-card-bg);
   border-radius: 16px;
   padding: 24px;
-  border: 1px solid var(--img-panda-border);
-  box-shadow: var(--img-panda-shadow);
+  border: 1px solid var(--mkit-si-border);
+  box-shadow: var(--mkit-si-shadow);
   margin-bottom: 24px;
 }
 
-.img-panda-converter-card h2,
-.img-panda-converter-card h3 {
+.mkit-si-converter-card h2,
+.mkit-si-converter-card h3 {
   font-size: 18px;
   font-weight: 700;
   margin: 0 0 20px 0;
-  color: var(--img-panda-text-main);
+  color: var(--mkit-si-text-main);
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
 /* History Table */
-.img-panda-history-table {
+.mkit-si-history-table {
   border: none !important;
   box-shadow: none !important;
   border-collapse: separate;
@@ -255,10 +255,10 @@
   background: transparent !important;
 }
 
-.img-panda-history-table thead th {
+.mkit-si-history-table thead th {
   background: transparent !important;
   border: none !important;
-  color: var(--img-panda-text-muted) !important;
+  color: var(--mkit-si-text-muted) !important;
   font-weight: 600 !important;
   padding: 8px 16px !important;
   text-transform: uppercase;
@@ -266,38 +266,38 @@
   letter-spacing: 0.05em;
 }
 
-.img-panda-history-table tbody tr {
-  background: var(--img-panda-card-bg);
+.mkit-si-history-table tbody tr {
+  background: var(--mkit-si-card-bg);
   transition: all 0.2s ease;
 }
 
-.img-panda-history-table tbody tr:hover {
+.mkit-si-history-table tbody tr:hover {
   background: #fdfdfd !important;
   transform: scale(1.005);
 }
 
-.img-panda-history-table td {
+.mkit-si-history-table td {
   border: none !important;
   padding: 16px !important;
   vertical-align: middle !important;
-  border-top: 1px solid var(--img-panda-border) !important;
-  border-bottom: 1px solid var(--img-panda-border) !important;
+  border-top: 1px solid var(--mkit-si-border) !important;
+  border-bottom: 1px solid var(--mkit-si-border) !important;
 }
 
-.img-panda-history-table td:first-child {
-  border-left: 1px solid var(--img-panda-border) !important;
+.mkit-si-history-table td:first-child {
+  border-left: 1px solid var(--mkit-si-border) !important;
   border-top-left-radius: 12px;
   border-bottom-left-radius: 12px;
 }
 
-.img-panda-history-table td:last-child {
-  border-right: 1px solid var(--img-panda-border) !important;
+.mkit-si-history-table td:last-child {
+  border-right: 1px solid var(--mkit-si-border) !important;
   border-top-right-radius: 12px;
   border-bottom-right-radius: 12px;
 }
 
-.img-panda-savings-badge {
-  background: var(--img-panda-success) !important;
+.mkit-si-savings-badge {
+  background: var(--mkit-si-success) !important;
   color: #fff !important;
   padding: 6px 10px;
   border-radius: 20px;
@@ -307,7 +307,7 @@
 }
 
 /* Support Box */
-.img-panda-support-notice {
+.mkit-si-support-notice {
   background: #f0fdf4;
   border: 1px solid #b7e4c7;
   border-radius: 12px;
@@ -321,7 +321,7 @@
 }
 
 /* Settings Form Styling */
-#img-panda-settings-form h2 {
+#mkit-si-settings-form h2 {
   display: none; /* Hide default section titles */
 }
 
@@ -333,11 +333,11 @@
 
 /* Sidebar Info Cards */
 .sidebar-card {
-  background: var(--img-panda-card-bg);
+  background: var(--mkit-si-card-bg);
   border-radius: 16px;
   padding: 20px;
-  border: 1px solid var(--img-panda-border);
-  box-shadow: var(--img-panda-shadow);
+  border: 1px solid var(--mkit-si-border);
+  box-shadow: var(--mkit-si-shadow);
   margin-bottom: 20px;
 }
 
@@ -356,8 +356,8 @@
 
 /* Button Refinement */
 .button-primary {
-  background: var(--img-panda-primary) !important;
-  border-color: var(--img-panda-primary) !important;
+  background: var(--mkit-si-primary) !important;
+  border-color: var(--mkit-si-primary) !important;
   border-radius: 8px !important;
   padding: 6px 20px !important;
   font-weight: 600 !important;
@@ -367,14 +367,14 @@
 }
 
 .button-primary:hover {
-  background: var(--img-panda-primary-light) !important;
-  border-color: var(--img-panda-primary-light) !important;
+  background: var(--mkit-si-primary-light) !important;
+  border-color: var(--mkit-si-primary-light) !important;
   transform: translateY(-1px);
 }
 
 /* Status Msg */
 .ajax-status-msg {
-  color: var(--img-panda-success);
+  color: var(--mkit-si-success);
   font-weight: 600;
   margin-left: 12px;
   font-size: 14px;
@@ -382,18 +382,18 @@
 
 /* Responsive */
 @media (max-width: 1100px) {
-  .img-panda-dashboard-grid {
+  .mkit-si-dashboard-grid {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 782px) {
-  .img-panda-admin-header {
+  .mkit-si-admin-header {
     flex-direction: column;
     align-items: flex-start;
     padding: 20px;
   }
-  .img-panda-nav {
+  .mkit-si-nav {
     margin-top: 16px;
     width: 100%;
     overflow-x: auto;
@@ -401,13 +401,13 @@
 }
 
 /* Badge pulse dot animation */
-@keyframes panda-pulse {
+@keyframes mkit-si-pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
   50%       { opacity: 0.4; transform: scale(0.75); }
 }
 
 /* Fix dropdown option bg on dark card */
-#img-panda-ai-form select option {
+#mkit-si-ai-form select option {
   background: #fff;
   color: #131118;
 }

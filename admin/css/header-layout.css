@@ -1,34 +1,34 @@
-/* Reset WordPress admin styles for our plugin container */
-.img-panda-layout-container {
+﻿/* Reset WordPress admin styles for our plugin container */
+.mkit-si-layout-container {
 	font-family: 'Space Grotesk', sans-serif;
 	line-height: 1.5;
 }
 
-.img-panda-layout-container * {
+.mkit-si-layout-container * {
 	box-sizing: border-box;
 }
 
-.img-panda-layout-container h1,
-.img-panda-layout-container h2,
-.img-panda-layout-container h3,
-.img-panda-layout-container h4,
-.img-panda-layout-container h5,
-.img-panda-layout-container h6 {
+.mkit-si-layout-container h1,
+.mkit-si-layout-container h2,
+.mkit-si-layout-container h3,
+.mkit-si-layout-container h4,
+.mkit-si-layout-container h5,
+.mkit-si-layout-container h6 {
 	margin: 0;
 	padding: 0;
 	font-family: 'Space Grotesk', sans-serif;
 }
 
-.img-panda-layout-container p {
+.mkit-si-layout-container p {
 	margin: 0;
 	padding: 0;
 }
 
-.img-panda-layout-container a {
+.mkit-si-layout-container a {
 	text-decoration: none;
 }
 
-.img-panda-layout-container button {
+.mkit-si-layout-container button {
 	font-family: 'Space Grotesk', sans-serif;
 }
 
@@ -44,20 +44,20 @@
 }
 
 /* Range input styles */
-.img-panda-layout-container input[type='range'] {
+.mkit-si-layout-container input[type='range'] {
 	-webkit-appearance: none;
 	appearance: none;
 	background: transparent;
 	width: 100%;
 }
 
-.img-panda-layout-container input[type='range']::-webkit-slider-runnable-track {
+.mkit-si-layout-container input[type='range']::-webkit-slider-runnable-track {
 	background: #e5e7eb;
 	height: 6px;
 	border-radius: 3px;
 }
 
-.img-panda-layout-container input[type='range']::-webkit-slider-thumb {
+.mkit-si-layout-container input[type='range']::-webkit-slider-thumb {
 	-webkit-appearance: none;
 	height: 18px;
 	width: 18px;
@@ -68,13 +68,13 @@
 	cursor: pointer;
 }
 
-.img-panda-layout-container input[type='range']::-moz-range-track {
+.mkit-si-layout-container input[type='range']::-moz-range-track {
 	background: #e5e7eb;
 	height: 6px;
 	border-radius: 3px;
 }
 
-.img-panda-layout-container input[type='range']::-moz-range-thumb {
+.mkit-si-layout-container input[type='range']::-moz-range-thumb {
 	height: 18px;
 	width: 18px;
 	border-radius: 50%;
@@ -85,8 +85,8 @@
 }
 
 /* Radio and checkbox styles */
-.img-panda-layout-container input[type='radio'],
-.img-panda-layout-container input[type='checkbox'] {
+.mkit-si-layout-container input[type='radio'],
+.mkit-si-layout-container input[type='checkbox'] {
 	accent-color: #7c3bed;
 }
 
@@ -106,56 +106,56 @@
 
 
 /* Fix button styles in WP admin - only for .bg-primary buttons */
-.img-panda-layout-container .bg-primary {
+.mkit-si-layout-container .bg-primary {
 	background-color: #7c3bed !important;
 	color: #ffffff !important;
 }
 
 /* White buttons with purple text */
-.img-panda-layout-container button.bg-white,
-.img-panda-layout-container .bg-white {
+.mkit-si-layout-container button.bg-white,
+.mkit-si-layout-container .bg-white {
 	background-color: #ffffff !important;
 }
 
-.img-panda-layout-container button.bg-white .text-primary,
-.img-panda-layout-container .bg-white.text-primary,
-.img-panda-layout-container button.text-primary {
+.mkit-si-layout-container button.bg-white .text-primary,
+.mkit-si-layout-container .bg-white.text-primary,
+.mkit-si-layout-container button.text-primary {
 	color: #7c3bed !important;
 }
 
 /* Gray buttons */
-.img-panda-layout-container button.bg-\[#f2f0f4\],
-.img-panda-layout-container .bg-\[#f2f0f4\] {
+.mkit-si-layout-container button.bg-\[#f2f0f4\],
+.mkit-si-layout-container .bg-\[#f2f0f4\] {
 	background-color: #f2f0f4 !important;
 	color: #131118 !important;
 }
 
 /* Reset default button styles */
-.img-panda-layout-container button {
+.mkit-si-layout-container button {
 	border: none;
 	cursor: pointer;
 }
 
-.img-panda-layout-container .text-primary {
+.mkit-si-layout-container .text-primary {
 	color: #7c3bed !important;
 }
 
 /* Table styling */
-.img-panda-layout-container table {
+.mkit-si-layout-container table {
 	border-collapse: collapse;
 	width: 100%;
 }
 
-.img-panda-layout-container table th,
-.img-panda-layout-container table td {
+.mkit-si-layout-container table th,
+.mkit-si-layout-container table td {
 	text-align: left;
 }
 
 /* Fix link colors */
-.img-panda-layout-container a.text-primary {
+.mkit-si-layout-container a.text-primary {
 	color: #7c3bed;
 }
 
-.img-panda-layout-container a.text-primary:hover {
+.mkit-si-layout-container a.text-primary:hover {
 	color: #6d2fd6;
 }

@@ -4,7 +4,7 @@
  *
  * Handles batch processing of images for WebP conversion.
  *
- * @package Img_Panda
+ * @package Mkit_Si
  */
 
 // Exit if accessed directly
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 /**
  * Bulk Processor Class.
  */
-class Img_Panda_Bulk_Processor
+class Mkit_Si_Bulk_Processor
 {
 
 	/**
@@ -33,10 +33,10 @@ class Img_Panda_Bulk_Processor
 	public function __construct()
 	{
 		// Allow filtering of batch size for different server capabilities
-		$this->batch_size = apply_filters('img_panda_batch_size', 50);
+		$this->batch_size = apply_filters('mkit_si_batch_size', 50);
 
 		// Hook for WP Cron if needed
-		add_action('img_panda_bulk_cron', array($this, 'process_next_batch_cron'));
+		add_action('mkit_si_bulk_cron', array($this, 'process_next_batch_cron'));
 	}
 
 	/**
@@ -55,11 +55,12 @@ class Img_Panda_Bulk_Processor
 			'post_status'    => 'any',
 			'posts_per_page' => -1,
 			'fields'         => 'ids',
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Required to check attachment conversion status
 			'meta_query'     => array(
 				'relation' => 'AND',
 				// Rule 1: If it is an "Original" from a backup pair, leave it alone (Sacred Backup)
 				array(
-					'key'     => '_img_panda_is_original_source',
+					'key'     => '_mkit_si_is_original_source',
 					'compare' => 'NOT EXISTS',
 				),
 				array(
@@ -68,17 +69,17 @@ class Img_Panda_Bulk_Processor
 					array(
 						'relation' => 'AND',
 						array(
-							'key'     => '_img_panda_original_id',
+							'key'     => '_mkit_si_original_id',
 							'compare' => 'NOT EXISTS',
 						),
 						array(
 							'relation' => 'OR',
 							array(
-								'key'     => '_img_panda_converted',
+								'key'     => '_mkit_si_converted',
 								'compare' => 'NOT EXISTS',
 							),
 							array(
-								'key'     => '_img_panda_converted',
+								'key'     => '_mkit_si_converted',
 								'value'   => '0',
 								'compare' => '=',
 							),
@@ -273,9 +274,10 @@ class Img_Panda_Bulk_Processor
 			'post_status'    => 'any',
 			'posts_per_page' => -1,
 			'fields'         => 'ids',
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Required to retrieve successfully converted attachments
 			'meta_query'     => array(
 				array(
-					'key'     => '_img_panda_converted',
+					'key'     => '_mkit_si_converted',
 					'value'   => '1',
 					'compare' => '=',
 				),
@@ -296,9 +298,9 @@ class Img_Panda_Bulk_Processor
 	public function initialize_bulk_conversion($image_ids, $filters = array())
 	{
 		// Store queue in option
-		update_option('img_panda_conversion_queue', $image_ids);
-		update_option('img_panda_conversion_status', 'active');
-		update_option('img_panda_conversion_progress', array(
+		update_option('mkit_si_conversion_queue', $image_ids);
+		update_option('mkit_si_conversion_status', 'active');
+		update_option('mkit_si_conversion_progress', array(
 			'total' => count($image_ids),
 			'processed' => 0,
 			'successful' => 0,
@@ -320,27 +322,27 @@ class Img_Panda_Bulk_Processor
 	public function process_next_batch()
 	{
 		// Check if conversion is paused
-		$status = get_option('img_panda_conversion_status', 'inactive');
+		$status = get_option('mkit_si_conversion_status', 'inactive');
 		if ('paused' === $status) {
 			return array(
 				'success' => false,
-				'message' => __('Conversion is paused', 'img-panda'),
+				'message' => __('Conversion is paused', 'mak8it-smart-image'),
 				'status' => 'paused',
 			);
 		}
 
 		// Get queue
-		$queue = get_option('img_panda_conversion_queue', array());
+		$queue = get_option('mkit_si_conversion_queue', array());
 
 		if (empty($queue)) {
 			// Mark as completed
-			update_option('img_panda_conversion_status', 'completed');
+			update_option('mkit_si_conversion_status', 'completed');
 
 			return array(
 				'success' => true,
-				'message' => __('All images processed', 'img-panda'),
+				'message' => __('All images processed', 'mak8it-smart-image'),
 				'status' => 'completed',
-				'progress' => get_option('img_panda_conversion_progress', array()),
+				'progress' => get_option('mkit_si_conversion_progress', array()),
 			);
 		}
 
@@ -352,15 +354,15 @@ class Img_Panda_Bulk_Processor
 		$results = $this->process_batch($batch);
 
 		// Update queue
-		update_option('img_panda_conversion_queue', $remaining);
+		update_option('mkit_si_conversion_queue', $remaining);
 
 		// Update progress
-		$progress = get_option('img_panda_conversion_progress', array());
+		$progress = get_option('mkit_si_conversion_progress', array());
 		$progress['processed'] += count($batch);
 		$progress['successful'] += $results['successful'];
 		$progress['failed'] += $results['failed'];
 		$progress['skipped'] += $results['skipped'];
-		update_option('img_panda_conversion_progress', $progress);
+		update_option('mkit_si_conversion_progress', $progress);
 
 		// Calculate estimated time
 		$elapsed = time() - $progress['start_time'];
@@ -398,13 +400,13 @@ class Img_Panda_Bulk_Processor
 		wp_raise_memory_limit('image');
 
 		// Get converter
-		require_once IMG_PANDA_PLUGIN_DIR . 'includes/class-converter.php';
-		$converter = new Img_Panda_Converter();
+		require_once MKIT_SI_PLUGIN_DIR . 'includes/class-converter.php';
+		$converter = new Mkit_Si_Converter();
 		$converter->init();
 
 		// Get settings & Progress (for bulk specific options)
-		$settings = get_option('Img_Panda_settings', array());
-		$progress = get_option('img_panda_conversion_progress', array());
+		$settings = get_option('Mkit_Si_settings', array());
+		$progress = get_option('mkit_si_conversion_progress', array());
 		$generate_alt_bulk = isset($progress['filters']['generate_alt']) ? (int)$progress['filters']['generate_alt'] : 0;
 		$quality = isset($settings['quality']) ? intval($settings['quality']) : 60;
 
@@ -424,7 +426,7 @@ class Img_Panda_Bulk_Processor
 			if (!$file_path || !file_exists($file_path)) {
 				$stats['skipped']++;
 				$log_entry['status'] = 'skipped';
-				$log_entry['message'] = __('File not found', 'img-panda');
+				$log_entry['message'] = __('File not found', 'mak8it-smart-image');
 				$stats['logs'][] = $log_entry;
 				continue;
 			}
@@ -434,7 +436,7 @@ class Img_Panda_Bulk_Processor
 			$log_entry['original_size'] = $original_size;
 
 			// Check current states
-			$is_already_converted = (get_post_meta($image_id, '_img_panda_converted', true) === '1');
+			$is_already_converted = (get_post_meta($image_id, '_mkit_si_converted', true) === '1');
 			$current_alt = get_post_meta($image_id, '_wp_attachment_image_alt', true);
 			$is_missing_alt = empty($current_alt);
 
@@ -442,67 +444,81 @@ class Img_Panda_Bulk_Processor
 			$should_gen_alt = ($generate_alt_bulk === 1) || (isset($settings['auto_alt']) && '1' === $settings['auto_alt']);
 			
 			if ($should_gen_alt && $is_missing_alt) {
-				require_once IMG_PANDA_PLUGIN_DIR . 'includes/class-ai-handler.php';
-				$ai_handler = new Img_Panda_AI_Handler();
+				require_once MKIT_SI_PLUGIN_DIR . 'includes/class-ai-handler.php';
+				$ai_handler = new Mkit_Si_AI_Handler();
 				$ai_handler->generate_alt_text($image_id);
 			}
 
 			// 2. Convert to WebP if missing
 			if (!$is_already_converted) {
-				// Apply Min Size Filter for WebP conversion ONLY
-				$min_size_kb = isset($progress['filters']['min_size']) ? intval($progress['filters']['min_size']) : 0;
-				$min_bytes = $min_size_kb * 1024;
+				$file_ext = strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
+				if ('webp' === $file_ext) {
+					update_post_meta($image_id, '_mkit_si_converted', '1');
+					update_post_meta($image_id, '_mkit_si_original_size', $original_size);
+					update_post_meta($image_id, '_mkit_si_new_size', $original_size);
+					update_post_meta($image_id, '_mkit_si_conversion_date', time());
+					update_post_meta($image_id, '_mkit_si_path', $file_path);
 
-				if ($min_bytes > 0 && $original_size < $min_bytes) {
-					// Skip WebP but count as "Success" because we might have handled Alt Text
-					$log_entry['message'] = sprintf(__('SEO handled. WebP skipped (Size < %d KB)', 'img-panda'), $min_size_kb);
 					$stats['successful']++;
 					$log_entry['status'] = 'success';
+					$log_entry['message'] = __('Image is already WebP format', 'mak8it-smart-image');
 				} else {
-					// Backup if enabled
-					if (isset($settings['enable_backup']) && '1' === $settings['enable_backup']) {
-						$this->backup_image($image_id, $file_path);
-					}
+					// Apply Min Size Filter for WebP conversion ONLY
+					$min_size_kb = isset($progress['filters']['min_size']) ? intval($progress['filters']['min_size']) : 0;
+					$min_bytes = $min_size_kb * 1024;
 
-					// Convert image
-					$result = $converter->convert_image_to_webp($file_path, $quality);
-
-				if ($result['success']) {
-					$webp_size = file_exists($result['webp_path']) ? filesize($result['webp_path']) : 0;
-					$log_entry['new_size'] = $webp_size;
-
-					// Force "Replace Mode" for Bulk Optimizer (as requested)
-					$replace_mode = 'replace';
-
-					if ('replace' === $replace_mode) {
-						$this->replace_with_webp($image_id, $file_path, $result['webp_path']);
+					if ($min_bytes > 0 && $original_size < $min_bytes) {
+						// Skip WebP but count as "Success" because we might have handled Alt Text
+						/* translators: %d: Minimum size in KB */
+						$log_entry['message'] = sprintf(__('SEO handled. WebP skipped (Size < %d KB)', 'mak8it-smart-image'), $min_size_kb);
+						$stats['successful']++;
+						$log_entry['status'] = 'success';
 					} else {
-						$converter->create_webp_attachment($image_id);
-					}
+						// Backup if enabled
+						if (isset($settings['enable_backup']) && '1' === $settings['enable_backup']) {
+							$this->backup_image($image_id, $file_path);
+						}
 
-					// Update post meta for conversion
-					update_post_meta($image_id, '_img_panda_converted', '1');
-					update_post_meta($image_id, '_img_panda_original_size', $original_size);
-					update_post_meta($image_id, '_img_panda_new_size', $webp_size);
-					update_post_meta($image_id, '_img_panda_conversion_date', time());
-					update_post_meta($image_id, '_img_panda_path', $result['webp_path']);
+						// Convert image
+						$result = $converter->convert_image_to_webp($file_path, $quality);
 
-					$this->update_stats(array('space_saved' => $original_size - $webp_size, 'conversion_successful' => 1));
-					$stats['successful']++;
-					$log_entry['status'] = 'success';
-					$log_entry['message'] = __('Optimized & WebP created', 'img-panda');
-					} else {
-						$stats['failed']++;
-						$log_entry['status'] = 'failed';
-						$log_entry['message'] = $result['message'];
-						$this->log_error($image_id, $result['message']);
+						if ($result['success']) {
+							$webp_size = file_exists($result['webp_path']) ? filesize($result['webp_path']) : 0;
+							$log_entry['new_size'] = $webp_size;
+
+							// Force "Replace Mode" for Bulk Optimizer (as requested)
+							$replace_mode = 'replace';
+
+							if ('replace' === $replace_mode) {
+								$this->replace_with_webp($image_id, $file_path, $result['webp_path']);
+							} else {
+								$converter->create_webp_attachment($image_id);
+							}
+
+							// Update post meta for conversion
+							update_post_meta($image_id, '_mkit_si_converted', '1');
+							update_post_meta($image_id, '_mkit_si_original_size', $original_size);
+							update_post_meta($image_id, '_mkit_si_new_size', $webp_size);
+							update_post_meta($image_id, '_mkit_si_conversion_date', time());
+							update_post_meta($image_id, '_mkit_si_path', $result['webp_path']);
+
+							$this->update_stats(array('space_saved' => $original_size - $webp_size, 'conversion_successful' => 1));
+							$stats['successful']++;
+							$log_entry['status'] = 'success';
+							$log_entry['message'] = __('Optimized & WebP created', 'mak8it-smart-image');
+						} else {
+							$stats['failed']++;
+							$log_entry['status'] = 'failed';
+							$log_entry['message'] = $result['message'];
+							$this->log_error($image_id, $result['message']);
+						}
 					}
-				} // End of WebP else
+				} // End of WebP check else
 			} else { // Already converted
 				// We already handled Alt Text above, so if we are here, we just skip WebP
 				$stats['successful']++; // Still count as success because we finished what was needed (SEO)
 				$log_entry['status'] = 'success';
-				$log_entry['message'] = __('SEO Updated (Already WebP)', 'img-panda');
+				$log_entry['message'] = __('SEO Updated (Already WebP)', 'mak8it-smart-image');
 			}
 
 			$stats['logs'][] = $log_entry;
@@ -512,7 +528,7 @@ class Img_Panda_Bulk_Processor
 		}
 
 		// Clear stats cache after batch processing
-		Img_Panda_Stats::clear_cache();
+		Mkit_Si_Stats::clear_cache();
 
 		return $stats;
 	}
@@ -528,7 +544,7 @@ class Img_Panda_Bulk_Processor
 	private function backup_image($image_id, $file_path)
 	{
 		$upload_dir = wp_upload_dir();
-		$backup_dir = $upload_dir['basedir'] . '/img-panda-backups/' . gmdate('Y/m');
+		$backup_dir = $upload_dir['basedir'] . '/mkit-si-backups/' . gmdate('Y/m');
 
 		// Create backup directory
 		if (!file_exists($backup_dir)) {
@@ -538,7 +554,7 @@ class Img_Panda_Bulk_Processor
 		$backup_path = $backup_dir . '/' . $image_id . '-' . basename($file_path);
 
 		if (copy($file_path, $backup_path)) {
-			update_post_meta($image_id, '_img_panda_backup_path', $backup_path);
+			update_post_meta($image_id, '_mkit_si_backup_path', $backup_path);
 			return true;
 		}
 
@@ -553,7 +569,7 @@ class Img_Panda_Bulk_Processor
 	 */
 	public function pause_conversion()
 	{
-		update_option('img_panda_conversion_status', 'paused');
+		update_option('mkit_si_conversion_status', 'paused');
 		return true;
 	}
 
@@ -565,7 +581,7 @@ class Img_Panda_Bulk_Processor
 	 */
 	public function resume_conversion()
 	{
-		update_option('img_panda_conversion_status', 'active');
+		update_option('mkit_si_conversion_status', 'active');
 		return true;
 	}
 
@@ -577,8 +593,8 @@ class Img_Panda_Bulk_Processor
 	 */
 	public function stop_conversion()
 	{
-		delete_option('img_panda_conversion_queue');
-		update_option('img_panda_conversion_status', 'stopped');
+		delete_option('mkit_si_conversion_queue');
+		update_option('mkit_si_conversion_status', 'stopped');
 		return true;
 	}
 
@@ -590,7 +606,7 @@ class Img_Panda_Bulk_Processor
 	 */
 	private function update_stats($data)
 	{
-		$stats = get_option('img_panda_stats', array(
+		$stats = get_option('mkit_si_stats', array(
 			'total_conversions' => 0,
 			'total_space_saved' => 0,
 			'successful_conversions' => 0,
@@ -611,7 +627,7 @@ class Img_Panda_Bulk_Processor
 			$stats['failed_conversions']++;
 		}
 
-		update_option('img_panda_stats', $stats);
+		update_option('mkit_si_stats', $stats);
 	}
 
 	/**
@@ -622,7 +638,7 @@ class Img_Panda_Bulk_Processor
 	 */
 	private function log_conversion($log_entry)
 	{
-		$logs = get_option('img_panda_conversion_logs', array());
+		$logs = get_option('mkit_si_conversion_logs', array());
 
 		// Keep only last 500 entries
 		if (count($logs) >= 500) {
@@ -630,7 +646,7 @@ class Img_Panda_Bulk_Processor
 		}
 
 		$logs[] = $log_entry;
-		update_option('img_panda_conversion_logs', $logs);
+		update_option('mkit_si_conversion_logs', $logs);
 	}
 
 	/**
@@ -642,7 +658,7 @@ class Img_Panda_Bulk_Processor
 	 */
 	private function log_error($image_id, $message)
 	{
-		$errors = get_option('img_panda_conversion_errors', array());
+		$errors = get_option('mkit_si_conversion_errors', array());
 
 		$errors[] = array(
 			'image_id' => $image_id,
@@ -655,7 +671,7 @@ class Img_Panda_Bulk_Processor
 			$errors = array_slice($errors, -100);
 		}
 
-		update_option('img_panda_conversion_errors', $errors);
+		update_option('mkit_si_conversion_errors', $errors);
 	}
 
 	/**
@@ -764,7 +780,7 @@ class Img_Panda_Bulk_Processor
 
 		// If not completed, schedule next batch
 		if ('processing' === $result['status']) {
-			wp_schedule_single_event(time() + 5, 'img_panda_bulk_cron');
+			wp_schedule_single_event(time() + 5, 'mkit_si_bulk_cron');
 		}
 	}
 }

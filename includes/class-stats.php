@@ -4,7 +4,7 @@
  *
  * Tracks and manages WebP conversion statistics.
  *
- * @package Img_Panda
+ * @package Mkit_Si
  */
 
 // Exit if accessed directly
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 /**
  * Statistics Class.
  */
-class Img_Panda_Stats
+class Mkit_Si_Stats
 {
 
 	/**
@@ -23,7 +23,7 @@ class Img_Panda_Stats
 	 *
 	 * @var string
 	 */
-	const CACHE_KEY = 'img_panda_stats_cache';
+	const CACHE_KEY = 'mkit_si_stats_cache';
 
 	/**
 	 * Cache duration in seconds (5 minutes).
@@ -83,7 +83,7 @@ class Img_Panda_Stats
 	 */
 	public static function get_stats()
 	{
-		$stats = get_option('img_panda_stats', array(
+		$stats = get_option('mkit_si_stats', array(
 			'total_conversions' => 0,
 			'total_space_saved' => 0,
 			'successful_conversions' => 0,
@@ -102,7 +102,7 @@ class Img_Panda_Stats
 		global $wpdb;
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Aggregate stats query, caching handled by get_cached_stats()
 		$stats['original_total_size'] = $wpdb->get_var(
-			"SELECT SUM(CAST(meta_value AS UNSIGNED)) FROM {$wpdb->postmeta} WHERE meta_key = '_img_panda_original_size'"
+			"SELECT SUM(CAST(meta_value AS UNSIGNED)) FROM {$wpdb->postmeta} WHERE meta_key = '_mkit_si_original_size'"
 		);
 
 		// Dynamic space saved
@@ -141,9 +141,9 @@ class Img_Panda_Stats
 		global $wpdb;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Aggregate stats query, no user input
-		$original = (float) $wpdb->get_var( "SELECT SUM(CAST(meta_value AS UNSIGNED)) FROM {$wpdb->postmeta} WHERE meta_key = '_img_panda_original_size'" );
+		$original = (float) $wpdb->get_var( "SELECT SUM(CAST(meta_value AS UNSIGNED)) FROM {$wpdb->postmeta} WHERE meta_key = '_mkit_si_original_size'" );
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Aggregate stats query, no user input
-		$new      = (float) $wpdb->get_var( "SELECT SUM(CAST(meta_value AS UNSIGNED)) FROM {$wpdb->postmeta} WHERE meta_key = '_img_panda_new_size'" );
+		$new      = (float) $wpdb->get_var( "SELECT SUM(CAST(meta_value AS UNSIGNED)) FROM {$wpdb->postmeta} WHERE meta_key = '_mkit_si_new_size'" );
 
 		return max(0, (int) ($original - $new));
 	}
@@ -173,7 +173,7 @@ class Img_Panda_Stats
 			AND NOT EXISTS (
 				SELECT 1 FROM {$wpdb->postmeta} pm 
 				WHERE pm.post_id = p.ID 
-				AND pm.meta_key = '_img_panda_original_id'
+				AND pm.meta_key = '_mkit_si_original_id'
 			)"
 		);
 
@@ -201,12 +201,12 @@ class Img_Panda_Stats
 			INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id 
 			WHERE p.post_type = 'attachment' 
 			AND (p.post_mime_type LIKE 'image/%')
-			AND pm.meta_key = '_img_panda_converted' 
+			AND pm.meta_key = '_mkit_si_converted' 
 			AND pm.meta_value = '1'
 			AND NOT EXISTS (
 				SELECT 1 FROM {$wpdb->postmeta} pm2 
 				WHERE pm2.post_id = p.ID 
-				AND pm2.meta_key = '_img_panda_original_id'
+				AND pm2.meta_key = '_mkit_si_original_id'
 			)"
 		);
 
@@ -224,9 +224,9 @@ class Img_Panda_Stats
 		global $wpdb;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Aggregate stats query, no user input
-		$original = (float) $wpdb->get_var( "SELECT SUM(CAST(meta_value AS UNSIGNED)) FROM {$wpdb->postmeta} WHERE meta_key = '_img_panda_original_size'" );
+		$original = (float) $wpdb->get_var( "SELECT SUM(CAST(meta_value AS UNSIGNED)) FROM {$wpdb->postmeta} WHERE meta_key = '_mkit_si_original_size'" );
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Aggregate stats query, no user input
-		$new      = (float) $wpdb->get_var( "SELECT SUM(CAST(meta_value AS UNSIGNED)) FROM {$wpdb->postmeta} WHERE meta_key = '_img_panda_new_size'" );
+		$new      = (float) $wpdb->get_var( "SELECT SUM(CAST(meta_value AS UNSIGNED)) FROM {$wpdb->postmeta} WHERE meta_key = '_mkit_si_new_size'" );
 
 		if ( $original <= 0 ) {
 			return 0;
@@ -254,16 +254,16 @@ class Img_Panda_Stats
 			$wpdb->prepare(
 				"SELECT p.ID, p.post_title, pm1.meta_value as conversion_date, pm2.meta_value as original_size, pm3.meta_value as new_size
 				FROM {$wpdb->posts} p
-				INNER JOIN {$wpdb->postmeta} pm_main ON p.ID = pm_main.post_id AND pm_main.meta_key = '_img_panda_converted' AND pm_main.meta_value = '1'
-				LEFT JOIN {$wpdb->postmeta} pm1 ON p.ID = pm1.post_id AND pm1.meta_key = '_img_panda_conversion_date'
-				LEFT JOIN {$wpdb->postmeta} pm2 ON p.ID = pm2.post_id AND pm2.meta_key = '_img_panda_original_size'
-				LEFT JOIN {$wpdb->postmeta} pm3 ON p.ID = pm3.post_id AND pm3.meta_key = '_img_panda_new_size'
+				INNER JOIN {$wpdb->postmeta} pm_main ON p.ID = pm_main.post_id AND pm_main.meta_key = '_mkit_si_converted' AND pm_main.meta_value = '1'
+				LEFT JOIN {$wpdb->postmeta} pm1 ON p.ID = pm1.post_id AND pm1.meta_key = '_mkit_si_conversion_date'
+				LEFT JOIN {$wpdb->postmeta} pm2 ON p.ID = pm2.post_id AND pm2.meta_key = '_mkit_si_original_size'
+				LEFT JOIN {$wpdb->postmeta} pm3 ON p.ID = pm3.post_id AND pm3.meta_key = '_mkit_si_new_size'
 				WHERE p.post_type = 'attachment'
 				AND p.post_mime_type IN ('image/jpeg', 'image/jpg', 'image/png', 'image/webp')
 				AND NOT EXISTS (
 					SELECT 1 FROM {$wpdb->postmeta} pm_check 
 					WHERE pm_check.post_id = p.ID 
-					AND pm_check.meta_key = '_img_panda_original_id'
+					AND pm_check.meta_key = '_mkit_si_original_id'
 				)
 				ORDER BY pm1.meta_value DESC, p.ID DESC
 				LIMIT %d",
@@ -285,7 +285,7 @@ class Img_Panda_Stats
 	 */
 	public static function get_conversion_logs($page = 1, $per_page = 50)
 	{
-		$logs = get_option('img_panda_conversion_logs', array());
+		$logs = get_option('mkit_si_conversion_logs', array());
 		$total = count($logs);
 
 		// Reverse to show newest first
@@ -311,7 +311,7 @@ class Img_Panda_Stats
 	 */
 	public static function clear_logs()
 	{
-		delete_option('img_panda_conversion_logs');
+		delete_option('mkit_si_conversion_logs');
 		return true;
 	}
 
@@ -323,7 +323,7 @@ class Img_Panda_Stats
 	 */
 	public static function export_logs_csv()
 	{
-		$logs = get_option('img_panda_conversion_logs', array());
+		$logs = get_option('mkit_si_conversion_logs', array());
 
 		$csv = "Date,Image ID,Status,Original Size (bytes),New Size (bytes),Savings (bytes),Message\n";
 
@@ -355,7 +355,7 @@ class Img_Panda_Stats
 	 */
 	public static function get_errors()
 	{
-		return get_option('img_panda_conversion_errors', array());
+		return get_option('mkit_si_conversion_errors', array());
 	}
 
 	/**
@@ -387,9 +387,9 @@ class Img_Panda_Stats
 			'last_conversion_date' => null,
 		);
 
-		update_option('img_panda_stats', $default_stats);
-		delete_option('img_panda_conversion_logs');
-		delete_option('img_panda_conversion_errors');
+		update_option('mkit_si_stats', $default_stats);
+		delete_option('mkit_si_conversion_logs');
+		delete_option('mkit_si_conversion_errors');
 
 		return true;
 	}

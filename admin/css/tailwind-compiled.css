@@ -1,25 +1,25 @@
 /**
- * Compiled Tailwind CSS for Img Panda
+ * Compiled Tailwind CSS for Mak8it Smart Image
  * 
  * This file contains pre-compiled Tailwind utilities used by the plugin.
  * Generated for WordPress.org compliance (no external CDN dependencies).
  *
- * @package Img_Panda
+ * @package Mkit_Si
  */
 
 /* ============================================
    CSS Custom Properties (Theme)
    ============================================ */
 :root {
-  --ip-primary: #7c3bed;
-  --ip-primary-hover: #6d2fd6;
-  --ip-background-light: #faf8fc;
-  --ip-background-dark: #171121;
-  --ip-success: #10b981;
-  --ip-warning: #f59e0b;
-  --ip-danger: #ef4444;
-  --ip-text-main: #131118;
-  --ip-text-muted: #64748b;
+  --mkit-si-primary: #7c3bed;
+  --mkit-si-primary-hover: #6d2fd6;
+  --mkit-si-background-light: #faf8fc;
+  --mkit-si-background-dark: #171121;
+  --mkit-si-success: #10b981;
+  --mkit-si-warning: #f59e0b;
+  --mkit-si-danger: #ef4444;
+  --mkit-si-text-main: #131118;
+  --mkit-si-text-muted: #64748b;
 }
 
 /* ============================================
@@ -454,10 +454,10 @@
   color: #ffffff;
 }
 .text-primary {
-  color: var(--ip-primary);
+  color: var(--mkit-si-primary);
 }
 .text-success {
-  color: var(--ip-success);
+  color: var(--mkit-si-success);
 }
 .text-red-500 {
   color: #ef4444;
@@ -481,10 +481,10 @@
   background-color: #ffffff;
 }
 .bg-primary {
-  background-color: var(--ip-primary);
+  background-color: var(--mkit-si-primary);
 }
 .bg-success {
-  background-color: var(--ip-success);
+  background-color: var(--mkit-si-success);
 }
 .bg-\[#f2f0f4\] {
   background-color: #f2f0f4;
@@ -525,7 +525,7 @@
 }
 
 .border-primary {
-  border-color: var(--ip-primary);
+  border-color: var(--mkit-si-primary);
 }
 .border-primary\/10 {
   border-color: rgba(124, 59, 237, 0.1);
@@ -770,7 +770,7 @@
    SVG Stroke Colors
    ============================================ */
 .stroke-primary {
-  stroke: var(--ip-primary);
+  stroke: var(--mkit-si-primary);
 }
 .stroke-\[#f2f0f4\] {
   stroke: #f2f0f4;
@@ -807,10 +807,10 @@
    Focus States
    ============================================ */
 .focus\:ring-2:focus {
-  box-shadow: 0 0 0 2px var(--ip-primary);
+  box-shadow: 0 0 0 2px var(--mkit-si-primary);
 }
 .focus\:ring-primary:focus {
-  --tw-ring-color: var(--ip-primary);
+  --tw-ring-color: var(--mkit-si-primary);
 }
 
 /* ============================================
@@ -876,7 +876,7 @@
   color: #ffffff;
 }
 .dark .dark\:bg-background-dark {
-  background-color: var(--ip-background-dark);
+  background-color: var(--mkit-si-background-dark);
 }
 .dark .dark\:bg-background-dark\/70 {
   background-color: rgba(23, 17, 33, 0.7);
@@ -1028,7 +1028,7 @@
   background-color: rgba(16, 185, 129, 0.05);
 }
 .border-success {
-  border-color: var(--ip-success);
+  border-color: var(--mkit-si-success);
 }
 .border-red-500 {
   border-color: #ef4444;
@@ -1061,7 +1061,7 @@
    Form Styles & Accent
    ============================================ */
 .accent-primary {
-  accent-color: var(--ip-primary);
+  accent-color: var(--mkit-si-primary);
 }
 
 input[type="range"] {
@@ -1082,7 +1082,7 @@ input[type="range"]::-webkit-slider-thumb {
   height: 18px;
   width: 18px;
   border-radius: 50%;
-  background: var(--ip-primary);
+  background: var(--mkit-si-primary);
   margin-top: -6px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
@@ -1097,7 +1097,7 @@ input[type="range"]::-moz-range-thumb {
   height: 18px;
   width: 18px;
   border-radius: 50%;
-  background: var(--ip-primary);
+  background: var(--mkit-si-primary);
   border: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
@@ -1105,14 +1105,14 @@ input[type="range"]::-moz-range-thumb {
 /* Radio & Checkbox Styling */
 input[type="radio"],
 input[type="checkbox"] {
-  accent-color: var(--ip-primary);
+  accent-color: var(--mkit-si-primary);
 }
 
 /* ============================================
    Toggle Switch (Peer-based)
    ============================================ */
 .peer:checked ~ .peer-checked\:bg-primary {
-  background-color: var(--ip-primary);
+  background-color: var(--mkit-si-primary);
 }
 
 .peer:checked ~ .peer-checked\:after\:translate-x-full::after {
@@ -1151,7 +1151,7 @@ input[type="checkbox"] {
 }
 
 .peer:checked ~ div {
-  background-color: var(--ip-primary);
+  background-color: var(--mkit-si-primary);
 }
 
 .peer:checked ~ div::after {
@@ -1240,16 +1240,16 @@ hr.border-\[#f2f0f4\] {
    Additional Hover Effects
    ============================================ */
 .hover\:bg-primary:hover {
-  background-color: var(--ip-primary);
+  background-color: var(--mkit-si-primary);
 }
 
 /* ============================================
    Focus Ring
    ============================================ */
 .focus\:ring-primary:focus {
-  --tw-ring-color: var(--ip-primary);
+  --tw-ring-color: var(--mkit-si-primary);
 }
 
 .focus\:ring-2:focus {
-  box-shadow: 0 0 0 2px var(--ip-primary);
+  box-shadow: 0 0 0 2px var(--mkit-si-primary);
 }

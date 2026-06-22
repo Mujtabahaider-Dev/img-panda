@@ -4,7 +4,7 @@
  *
  * Handles the replacement of image URLs with WebP versions on the frontend.
  *
- * @package Img_Panda
+ * @package Mkit_Si
  */
 
 // Exit if accessed directly
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Frontend Class.
  */
-class Img_Panda_Frontend {
+class Mkit_Si_Frontend {
 
 	/**
 	 * Plugin settings.
@@ -25,13 +25,20 @@ class Img_Panda_Frontend {
 	private $settings;
 
 	/**
+	 * Whether we opened the output buffer (prevents closing other plugins' buffers).
+	 *
+	 * @var bool
+	 */
+	private $buffering_started = false;
+
+	/**
 	 * Initialize the frontend handler.
 	 *
 	 * @since 1.0.0
 	 */
 	public function init() {
 		// Load settings
-		$this->settings = get_option( 'Img_Panda_settings', array() );
+		$this->settings = get_option( 'Mkit_Si_settings', array() );
 
 		// Check if frontend serving is enabled (default: true)
 		$enabled = isset( $this->settings['enable_frontend_serving'] ) ? $this->settings['enable_frontend_serving'] : '1';
@@ -50,22 +57,26 @@ class Img_Panda_Frontend {
 	/**
 	 * Start output buffering.
 	 *
+	 * Sets $buffering_started so stop_buffering() only closes our own buffer.
+	 *
 	 * @since 1.0.0
 	 */
 	public function start_buffering() {
 		ob_start( array( $this, 'replace_images' ) );
+		$this->buffering_started = true;
 	}
 
 	/**
 	 * Stop output buffering.
 	 *
-	 * Flushes and closes the buffer opened by start_buffering().
-	 * Hooked to 'shutdown' to guarantee execution regardless of plugin flow.
+	 * Only closes the buffer if we opened it, preventing interference with
+	 * other plugins or WordPress core output buffers.
 	 *
 	 * @since 1.0.0
 	 */
 	public function stop_buffering() {
-		if ( ob_get_level() > 0 ) {
+		if ( $this->buffering_started && ob_get_level() > 0 ) {
+			$this->buffering_started = false;
 			ob_end_flush();
 		}
 	}

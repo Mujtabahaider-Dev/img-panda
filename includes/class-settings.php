@@ -4,7 +4,7 @@
  *
  * Handles plugin settings and admin interface.
  *
- * @package Img_Panda
+ * @package Mkit_Si
  */
 
 // Exit if accessed directly
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 /**
  * Settings Class.
  */
-class Img_Panda_Settings
+class Mkit_Si_Settings
 {
 
 	/**
@@ -23,7 +23,7 @@ class Img_Panda_Settings
 	 *
 	 * @var string
 	 */
-	private $option_name = 'Img_Panda_settings';
+	private $option_name = 'Mkit_Si_settings';
 
 	/**
 	 * Initialize settings.
@@ -42,7 +42,7 @@ class Img_Panda_Settings
 		add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_assets'));
 
 		// Add settings link on plugins page
-		add_filter('plugin_action_links_' . IMG_PANDA_PLUGIN_BASENAME, array($this, 'add_action_links'));
+		add_filter('plugin_action_links_' . MKIT_SI_PLUGIN_BASENAME, array($this, 'add_action_links'));
 	}
 
 	/**
@@ -52,12 +52,12 @@ class Img_Panda_Settings
 	 */
 	public function add_settings_page()
 	{
-		// Add main menu page (Dashboard)
+				// Add main menu page (Dashboard)
 		add_menu_page(
-			__('Img Panda - Dashboard', 'img-panda'),
-			__('Img Panda', 'img-panda'),
+			__('Mak8it Smart Image - Dashboard', 'mak8it-smart-image'),
+			__('M8 Smart Image', 'mak8it-smart-image'),
 			'manage_options',
-			'img-panda',
+			'mak8it-smart-image',
 			array($this, 'render_settings_page'),
 			'dashicons-format-image',
 			65
@@ -65,31 +65,31 @@ class Img_Panda_Settings
 
 		// Add Dashboard submenu (rename the first item)
 		add_submenu_page(
-			'img-panda',
-			__('Dashboard', 'img-panda'),
-			__('Dashboard', 'img-panda'),
+			'mak8it-smart-image',
+			__('Dashboard', 'mak8it-smart-image'),
+			__('Dashboard', 'mak8it-smart-image'),
 			'manage_options',
-			'img-panda',
+			'mak8it-smart-image',
 			array($this, 'render_settings_page')
 		);
 
 		// Add Bulk Converter submenu
 		add_submenu_page(
-			'img-panda',
-			__('Bulk Converter', 'img-panda'),
-			__('Bulk Converter', 'img-panda'),
+			'mak8it-smart-image',
+			__('Bulk Converter', 'mak8it-smart-image'),
+			__('Bulk Converter', 'mak8it-smart-image'),
 			'manage_options',
-			'img-panda-bulk',
+			'mak8it-smart-image-bulk',
 			array($this, 'render_bulk_page')
 		);
 
 		// Add System Info submenu
 		add_submenu_page(
-			'img-panda',
-			__('System Info', 'img-panda'),
-			__('System Info', 'img-panda'),
+			'mak8it-smart-image',
+			__('System Info', 'mak8it-smart-image'),
+			__('System Info', 'mak8it-smart-image'),
 			'manage_options',
-			'img-panda-system-info',
+			'mak8it-smart-image-system-info',
 			array($this, 'render_system_info_page')
 		);
 	}
@@ -103,62 +103,62 @@ class Img_Panda_Settings
 	{
 		// Register setting
 		register_setting(
-			'Img_Panda_settings_group',
+			'Mkit_Si_settings_group',
 			$this->option_name,
 			array($this, 'sanitize_settings')
 		);
 
 		// Add settings section
 		add_settings_section(
-			'Img_Panda_main_section',
+			'Mkit_Si_main_section',
 			'', // No title
 			array($this, 'render_section_description'),
-			'img-panda'
+			'mak8it-smart-image'
 		);
 
 		// Auto-convert field
 		add_settings_field(
 			'auto_convert',
-			__('Auto-Convert on Upload', 'img-panda'),
+			__('Auto-Convert on Upload', 'mak8it-smart-image'),
 			array($this, 'render_auto_convert_field'),
-			'img-panda',
-			'Img_Panda_main_section'
+			'mak8it-smart-image',
+			'Mkit_Si_main_section'
 		);
 
 		// Quality field
 		add_settings_field(
 			'quality',
-			__('Conversion Quality', 'img-panda'),
+			__('Conversion Quality', 'mak8it-smart-image'),
 			array($this, 'render_quality_field'),
-			'img-panda',
-			'Img_Panda_main_section'
+			'mak8it-smart-image',
+			'Mkit_Si_main_section'
 		);
 
 		// Replace original field
 		add_settings_field(
 			'replace_original',
-			__('File Handling', 'img-panda'),
+			__('File Handling', 'mak8it-smart-image'),
 			array($this, 'render_replace_field'),
-			'img-panda',
-			'Img_Panda_main_section'
+			'mak8it-smart-image',
+			'Mkit_Si_main_section'
 		);
 
 		// Show WebP in library field
 		add_settings_field(
 			'show_webp_in_library',
-			__('Media Library Display', 'img-panda'),
+			__('Media Library Display', 'mak8it-smart-image'),
 			array($this, 'render_show_webp_field'),
-			'img-panda',
-			'Img_Panda_main_section'
+			'mak8it-smart-image',
+			'Mkit_Si_main_section'
 		);
 
 		// Frontend serving field
 		add_settings_field(
 			'enable_frontend_serving',
-			__('Frontend Serving', 'img-panda'),
+			__('Frontend Serving', 'mak8it-smart-image'),
 			array($this, 'render_frontend_serving_field'),
-			'img-panda',
-			'Img_Panda_main_section'
+			'mak8it-smart-image',
+			'Mkit_Si_main_section'
 		);
 	}
 
@@ -170,17 +170,17 @@ class Img_Panda_Settings
 	public function render_section_description()
 	{
 		// Check WebP support
-		$support = Img_Panda_Converter::check_webp_support();
+		$support = Mkit_Si_Converter::check_webp_support();
 
-		echo '<div class="img-panda-support-status">';
+		echo '<div class="mkit-si-support-status">';
 		if ($support['supported']) {
-			echo '<p class="img-panda-support-yes">';
+			echo '<p class="mkit-si-support-yes">';
 			echo '<span class="dashicons dashicons-yes-alt"></span> ';
 			echo esc_html($support['message']);
 			echo ' <strong>(' . esc_html($support['method']) . ')</strong>';
 			echo '</p>';
 		} else {
-			echo '<p class="img-panda-support-no">';
+			echo '<p class="mkit-si-support-no">';
 			echo '<span class="dashicons dashicons-warning"></span> ';
 			echo esc_html($support['message']);
 			echo '</p>';
@@ -200,10 +200,10 @@ class Img_Panda_Settings
 		?>
 		<label>
 			<input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[auto_convert]" value="1" <?php checked($value, '1'); ?>>
-			<?php esc_html_e('Automatically convert images to WebP when uploaded', 'img-panda'); ?>
+			<?php esc_html_e('Automatically convert images to WebP when uploaded', 'mak8it-smart-image'); ?>
 		</label>
 		<p class="description">
-			<?php esc_html_e('Enable this to automatically convert JPEG and PNG images to WebP format during upload.', 'img-panda'); ?>
+			<?php esc_html_e('Enable this to automatically convert JPEG and PNG images to WebP format during upload.', 'mak8it-smart-image'); ?>
 		</p>
 		<?php
 	}
@@ -224,7 +224,7 @@ class Img_Panda_Settings
 			<span class="quality-value"><?php echo esc_html($value); ?>%</span>
 		</div>
 		<p class="description">
-			<?php esc_html_e('Set the quality for WebP conversion. Lower values = smaller file size but lower quality. Recommended: 60-80%', 'img-panda'); ?>
+			<?php esc_html_e('Set the quality for WebP conversion. Lower values = smaller file size but lower quality. Recommended: 60-80%', 'mak8it-smart-image'); ?>
 		</p>
 		<?php
 	}
@@ -242,16 +242,16 @@ class Img_Panda_Settings
 		<fieldset>
 			<label>
 				<input type="radio" name="<?php echo esc_attr($this->option_name); ?>[replace_original]" value="keep_both" <?php checked($value, 'keep_both'); ?>>
-				<?php esc_html_e('Keep both original and WebP files', 'img-panda'); ?>
+				<?php esc_html_e('Keep both original and WebP files', 'mak8it-smart-image'); ?>
 			</label>
 			<br>
 			<label>
 				<input type="radio" name="<?php echo esc_attr($this->option_name); ?>[replace_original]" value="replace" <?php checked($value, 'replace'); ?>>
-				<?php esc_html_e('Replace original with WebP file', 'img-panda'); ?>
+				<?php esc_html_e('Replace original with WebP file', 'mak8it-smart-image'); ?>
 			</label>
 		</fieldset>
 		<p class="description">
-			<?php esc_html_e('Choose whether to keep the original files or replace them with WebP versions.', 'img-panda'); ?>
+			<?php esc_html_e('Choose whether to keep the original files or replace them with WebP versions.', 'mak8it-smart-image'); ?>
 		</p>
 		<?php
 	}
@@ -268,10 +268,10 @@ class Img_Panda_Settings
 		?>
 		<label>
 			<input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[show_webp_in_library]" value="1" <?php checked($value, '1'); ?>>
-			<?php esc_html_e('Show WebP files as separate items in Media Library', 'img-panda'); ?>
+			<?php esc_html_e('Show WebP files as separate items in Media Library', 'mak8it-smart-image'); ?>
 		</label>
 		<p class="description">
-			<?php esc_html_e('When "Keep both files" is selected, this will create separate media library entries for WebP versions. Disable this if you only want the original files to appear in the library (WebP files will still be created in the background).', 'img-panda'); ?>
+			<?php esc_html_e('When "Keep both files" is selected, this will create separate media library entries for WebP versions. Disable this if you only want the original files to appear in the library (WebP files will still be created in the background).', 'mak8it-smart-image'); ?>
 		</p>
 		<?php
 	}
@@ -288,10 +288,10 @@ class Img_Panda_Settings
 		?>
 		<label>
 			<input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[enable_frontend_serving]" value="1" <?php checked($value, '1'); ?>>
-			<?php esc_html_e('Serve WebP images on frontend', 'img-panda'); ?>
+			<?php esc_html_e('Serve WebP images on frontend', 'mak8it-smart-image'); ?>
 		</label>
 		<p class="description">
-			<?php esc_html_e('Automatically replace image URLs with WebP versions on the frontend if they exist. This uses output buffering to rewrite HTML.', 'img-panda'); ?>
+			<?php esc_html_e('Automatically replace image URLs with WebP versions on the frontend if they exist. This uses output buffering to rewrite HTML.', 'mak8it-smart-image'); ?>
 		</p>
 		<?php
 	}
@@ -354,11 +354,11 @@ class Img_Panda_Settings
 	{
 		// Check user capabilities
 		if (!current_user_can('manage_options')) {
-			wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'img-panda'));
+			wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'mak8it-smart-image'));
 		}
 
 		// Load template
-		require_once IMG_PANDA_PLUGIN_DIR . 'admin/settings-page.php';
+		require_once MKIT_SI_PLUGIN_DIR . 'admin/settings-page.php';
 	}
 
 
@@ -371,11 +371,11 @@ class Img_Panda_Settings
 	{
 		// Check user capabilities
 		if (!current_user_can('manage_options')) {
-			wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'img-panda'));
+			wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'mak8it-smart-image'));
 		}
 
 		// Load template
-		require_once IMG_PANDA_PLUGIN_DIR . 'admin/bulk-converter.php';
+		require_once MKIT_SI_PLUGIN_DIR . 'admin/bulk-converter.php';
 	}
 
 	/**
@@ -387,11 +387,11 @@ class Img_Panda_Settings
 	{
 		// Check user capabilities
 		if (!current_user_can('manage_options')) {
-			wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'img-panda'));
+			wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'mak8it-smart-image'));
 		}
 
 		// Load template
-		require_once IMG_PANDA_PLUGIN_DIR . 'admin/system-info.php';
+		require_once MKIT_SI_PLUGIN_DIR . 'admin/system-info.php';
 	}
 
 	/**
@@ -403,109 +403,109 @@ class Img_Panda_Settings
 	public function enqueue_admin_assets($hook)
 	{
 		// Check if we're on a plugin page
-		$is_plugin_page = (strpos($hook, 'img-panda') !== false);
+		$is_plugin_page = (strpos($hook, 'mak8it-smart-image') !== false);
 
 		if ($is_plugin_page) {
 			// Enqueue compiled Tailwind CSS with fonts (bundled locally for WP.org compliance)
 			wp_enqueue_style(
-				'img-panda-tailwind',
-				IMG_PANDA_PLUGIN_URL . 'admin/css/tailwind-compiled.css',
+				'mkit-si-tailwind',
+				MKIT_SI_PLUGIN_URL . 'admin/css/tailwind-compiled.css',
 				array(),
-				IMG_PANDA_VERSION
+				MKIT_SI_VERSION
 			);
 
 			wp_enqueue_style(
-				'img-panda-header-layout',
-				IMG_PANDA_PLUGIN_URL . 'admin/css/header-layout.css',
-				array('img-panda-tailwind'),
-				IMG_PANDA_VERSION
+				'mkit-si-header-layout',
+				MKIT_SI_PLUGIN_URL . 'admin/css/header-layout.css',
+				array('mkit-si-tailwind'),
+				MKIT_SI_VERSION
 			);
 
 			wp_enqueue_style(
-				'img-panda-admin',
-				IMG_PANDA_PLUGIN_URL . 'admin/css/admin-style.css',
-				array('img-panda-tailwind', 'img-panda-header-layout'),
-				IMG_PANDA_VERSION
+				'mkit-si-admin',
+				MKIT_SI_PLUGIN_URL . 'admin/css/admin-style.css',
+				array('mkit-si-tailwind', 'mkit-si-header-layout'),
+				MKIT_SI_VERSION
 			);
 
 			wp_enqueue_style(
-				'img-panda-toast',
-				IMG_PANDA_PLUGIN_URL . 'admin/css/toast-notice.css',
+				'mkit-si-toast',
+				MKIT_SI_PLUGIN_URL . 'admin/css/toast-notice.css',
 				array(),
-				IMG_PANDA_VERSION
+				MKIT_SI_VERSION
 			);
 
 			wp_enqueue_script(
-				'img-panda-toast',
-				IMG_PANDA_PLUGIN_URL . 'admin/js/toast-notice.js',
+				'mkit-si-toast',
+				MKIT_SI_PLUGIN_URL . 'admin/js/toast-notice.js',
 				array('jquery'),
-				IMG_PANDA_VERSION,
+				MKIT_SI_VERSION,
 				true
 			);
 
 			wp_enqueue_script(
-				'img-panda-admin',
-				IMG_PANDA_PLUGIN_URL . 'admin/js/admin-script.js',
+				'mkit-si-admin',
+				MKIT_SI_PLUGIN_URL . 'admin/js/admin-script.js',
 				array('jquery'),
-				IMG_PANDA_VERSION,
+				MKIT_SI_VERSION,
 				true
 			);
 
 			// Localize admin script with stats for the dashboard chart
 			wp_localize_script(
-				'img-panda-admin',
-				'imgPandaAdminData',
+				'mkit-si-admin',
+				'mkitSiAdminData',
 				array(
 					'ajaxUrl' => admin_url('admin-ajax.php'),
-					'nonce' => wp_create_nonce('img_panda_nonce'),
-					'stats' => Img_Panda_Stats::get_cached_stats(),
-					'settings' => get_option('Img_Panda_settings', array()),
+					'nonce' => wp_create_nonce('mkit_si_nonce'),
+					'stats' => Mkit_Si_Stats::get_cached_stats(),
+					'settings' => get_option('Mkit_Si_settings', array()),
 				)
 			);
 
 			// Enqueue Chart.js (bundled locally for WP.org compliance)
 			wp_enqueue_script(
-				'img-panda-chart',
-				IMG_PANDA_PLUGIN_URL . 'admin/js/vendor/chart.min.js',
+				'mkit-si-chart',
+				MKIT_SI_PLUGIN_URL . 'admin/js/vendor/chart.min.js',
 				array(),
-				'4.5.1',
+				'4.4.8',
 				true
 			);
 
 			wp_enqueue_style(
-				'img-panda-bulk',
-				IMG_PANDA_PLUGIN_URL . 'admin/css/bulk-style.css',
+				'mak8it-smart-image-bulk',
+				MKIT_SI_PLUGIN_URL . 'admin/css/bulk-style.css',
 				array(),
-				IMG_PANDA_VERSION
+				MKIT_SI_VERSION
 			);
 		}
 
 		// Load bulk converter page JavaScript
-		if (strpos($hook, 'img-panda-bulk') !== false) {
+		if (strpos($hook, 'mak8it-smart-image-bulk') !== false) {
 			wp_enqueue_script(
-				'img-panda-bulk-js',
-				IMG_PANDA_PLUGIN_URL . 'admin/js/bulk-converter.js',
+				'mak8it-smart-image-bulk-js',
+				MKIT_SI_PLUGIN_URL . 'admin/js/bulk-converter.js',
 				array('jquery'),
-				IMG_PANDA_VERSION,
+				MKIT_SI_VERSION,
 				true
 			);
 
 			// Localize script with AJAX data
 			wp_localize_script(
-				'img-panda-bulk-js',
-				'imgPandaBulkData',
+				'mak8it-smart-image-bulk-js',
+				'mkitSiBulkData',
 				array(
 					'ajaxUrl' => admin_url('admin-ajax.php'),
-					'nonce' => wp_create_nonce('img_panda_nonce'),
+					'nonce' => wp_create_nonce('mkit_si_nonce'),
 					'strings' => array(
-						'startingConversion' => __('Starting conversion...', 'img-panda'),
-						'processing' => __('Processing...', 'img-panda'),
-						'completed' => __('Conversion completed!', 'img-panda'),
-						'paused' => __('Conversion paused', 'img-panda'),
-						'stopped' => __('Conversion stopped', 'img-panda'),
-						'error' => __('An error occurred', 'img-panda'),
-						'confirmStop' => __('Are you sure you want to stop the conversion? Progress will be lost.', 'img-panda'),
-						'noFilters' => __('No filters applied', 'img-panda'),
+						'startingConversion' => __('Starting conversion...', 'mak8it-smart-image'),
+						'processing' => __('Processing...', 'mak8it-smart-image'),
+						'completed' => __('Conversion completed!', 'mak8it-smart-image'),
+						'paused' => __('Conversion paused', 'mak8it-smart-image'),
+						'stopped' => __('Conversion stopped', 'mak8it-smart-image'),
+						'error' => __('An error occurred', 'mak8it-smart-image'),
+						'confirmStop' => __('Are you sure you want to stop the conversion? Progress will be lost.', 'mak8it-smart-image'),
+						'noFilters' => __('No filters applied', 'mak8it-smart-image'),
 					),
 				)
 			);
@@ -523,14 +523,14 @@ class Img_Panda_Settings
 	{
 		$settings_link = sprintf(
 			'<a href="%s">%s</a>',
-			admin_url('admin.php?page=img-panda'),
-			__('Dashboard', 'img-panda')
+			admin_url('admin.php?page=mak8it-smart-image'),
+			__('Dashboard', 'mak8it-smart-image')
 		);
 
 		$bulk_link = sprintf(
 			'<a href="%s" style="color: #00a32a; font-weight: 600;">%s</a>',
-			admin_url('admin.php?page=img-panda-bulk'),
-			__('Bulk Convert', 'img-panda')
+			admin_url('admin.php?page=mak8it-smart-image-bulk'),
+			__('Bulk Convert', 'mak8it-smart-image')
 		);
 
 		array_unshift($links, $settings_link, $bulk_link);
