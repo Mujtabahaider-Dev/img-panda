@@ -8,6 +8,14 @@
 
 ---
 
+## 📸 Screenshots
+
+| 📊 Dashboard & Stats | 🚀 Bulk Converter |
+|---|---|
+| ![Dashboard](assets/screenshot-1.png) | ![Bulk Optimizer](assets/screenshot-2.png) |
+
+---
+
 ## 🚀 Key Features
 
 * **Local WebP Conversion** — Converts JPEG, PNG, and JFIF uploads directly on your server using PHP's GD Library or Imagick. No data leaves your host for image compression.

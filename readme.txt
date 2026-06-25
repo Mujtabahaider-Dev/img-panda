@@ -73,8 +73,7 @@ JPEG (`.jpg`, `.jpeg`) and PNG (`.png`) images are supported. GIF and SVG files 
 
 1. Dashboard — Optimization health chart, stat cards, and recent conversions table.
 2. Bulk Converter — Real-time progress bar with per-image status.
-3. Settings — AI Vision Engine configuration, compression level slider, and file-handling strategy.
-4. System Info — Server compatibility check showing PHP, GD Library, and Imagick status.
+
 
 == Changelog ==
 
