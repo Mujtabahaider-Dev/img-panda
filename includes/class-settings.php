@@ -43,6 +43,34 @@ class Mkit_Si_Settings
 
 		// Add settings link on plugins page
 		add_filter('plugin_action_links_' . MKIT_SI_PLUGIN_BASENAME, array($this, 'add_action_links'));
+
+		// Fix menu icon size in admin sidebar
+		add_action('admin_head', array($this, 'fix_menu_icon_css'));
+	}
+
+	/**
+	 * Fix custom menu icon size in the WordPress admin sidebar.
+	 *
+	 * @since 1.0.0
+	 */
+	public function fix_menu_icon_css()
+	{
+		echo '<style>
+			#toplevel_page_mak8it-smart-image .wp-menu-image img {
+				width: 20px !important;
+				height: 20px !important;
+				padding: 0 !important;
+				margin: 0 !important;
+				max-width: 20px !important;
+				max-height: 20px !important;
+				object-fit: contain !important;
+			}
+			#toplevel_page_mak8it-smart-image .wp-menu-image {
+				display: flex !important;
+				align-items: center !important;
+				justify-content: center !important;
+			}
+		</style>';
 	}
 
 	/**
@@ -59,7 +87,7 @@ class Mkit_Si_Settings
 			'manage_options',
 			'mak8it-smart-image',
 			array($this, 'render_settings_page'),
-			'dashicons-format-image',
+			MKIT_SI_PLUGIN_URL . 'assets/m8-smart-image-logo.png',
 			65
 		);
 

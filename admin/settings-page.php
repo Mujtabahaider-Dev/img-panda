@@ -47,11 +47,21 @@ require_once MKIT_SI_PLUGIN_DIR . 'admin/header.php';
 		</p>
 	</div>
 
+	<!-- Custom style for the Disk Saved icon to bypass any Tailwind compilation or caching issues -->
+	<style>
+		.mkit-si-disk-saved-icon {
+			color: rgba(255, 255, 255, 0.05) !important;
+		}
+		.group:hover .mkit-si-disk-saved-icon {
+			color: rgba(255, 255, 255, 0.15) !important;
+		}
+	</style>
+
 	<!-- Stats Grid -->
 	<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 		<!-- Stat Card 1 -->
 		<div
-			class="glass-card rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+			class="glass-card rounded-2xl p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 relative overflow-hidden group">
 			<div class="absolute -right-4 -top-4 text-primary/5 group-hover:text-primary/10 transition-colors">
 				<span class="material-symbols-outlined text-[80px]">image</span>
 			</div>
@@ -66,7 +76,7 @@ require_once MKIT_SI_PLUGIN_DIR . 'admin/header.php';
 		</div>
 		<!-- Stat Card 2 -->
 		<div
-			class="glass-card rounded-2xl p-6 shadow-sm border-l-4 border-primary bg-primary/[0.02] relative overflow-hidden group">
+			class="glass-card rounded-2xl p-6 shadow-sm border-l-4 border-primary bg-primary/[0.02] hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 relative overflow-hidden group">
 			<div class="absolute -right-4 -top-4 text-primary/5 group-hover:text-primary/10 transition-colors">
 				<span class="material-symbols-outlined text-[80px]">check_circle</span>
 			</div>
@@ -80,7 +90,7 @@ require_once MKIT_SI_PLUGIN_DIR . 'admin/header.php';
 			</div>
 		</div>
 		<!-- Stat Card 3 -->
-		<div class="glass-card rounded-2xl p-6 shadow-sm relative overflow-hidden group">
+		<div class="glass-card rounded-2xl p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 relative overflow-hidden group">
 			<div class="absolute -right-4 -top-4 text-primary/5 group-hover:text-primary/10 transition-colors">
 				<span class="material-symbols-outlined text-[80px]">pending</span>
 			</div>
@@ -90,10 +100,9 @@ require_once MKIT_SI_PLUGIN_DIR . 'admin/header.php';
 			<h3 class="text-3xl font-bold mb-2"><?php echo esc_html(number_format($unconverted_count)); ?></h3>
 			<p class="text-sm opacity-50 font-medium"><?php esc_html_e('Ready for conversion', 'mak8it-smart-image'); ?></p>
 		</div>
-		<!-- Stat Card 4 -->
-		<div class="bg-primary rounded-2xl p-6 shadow-xl shadow-primary/20 text-white relative overflow-hidden">
-			<div class="absolute right-0 bottom-0 opacity-10 translate-x-4 translate-y-4">
-				<span class="material-symbols-outlined text-[120px]">database</span>
+		<div class="bg-primary rounded-2xl p-6 shadow-xl shadow-primary/20 text-white hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-300 relative overflow-hidden group">
+			<div class="absolute -right-4 -top-4 mkit-si-disk-saved-icon transition-colors duration-300">
+				<span class="material-symbols-outlined text-[80px]">database</span>
 			</div>
 			<p class="text-sm font-bold opacity-80 mb-1 uppercase tracking-wider">
 				<?php esc_html_e('Disk Saved', 'mak8it-smart-image'); ?>

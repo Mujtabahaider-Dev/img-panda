@@ -218,7 +218,7 @@ require_once MKIT_SI_PLUGIN_DIR . 'admin/header.php';
 			<div class="glass-card rounded-3xl p-8 shadow-sm mt-6">
 				<h4 class="text-lg font-bold mb-4"><?php esc_html_e('Report a Bug / Support', 'mak8it-smart-image'); ?></h4>
 				<p class="text-sm opacity-60 mb-6">
-					<?php esc_html_e('Found a bug or need assistance? Visit our official WordPress.org support forum. You can copy your system details below to help us troubleshoot faster.', 'mak8it-smart-image'); ?>
+					<?php esc_html_e('Found a bug or need assistance? Report it directly on our GitHub Issues page. You can copy your system details below to help us troubleshoot faster.', 'mak8it-smart-image'); ?>
 				</p>
 				
 				<div class="flex flex-col gap-3">
@@ -228,10 +228,10 @@ require_once MKIT_SI_PLUGIN_DIR . 'admin/header.php';
 						<span class="btn-text"><?php esc_html_e('Copy System Details', 'mak8it-smart-image'); ?></span>
 					</button>
 					
-					<a href="https://wordpress.org/support/plugin/mak8it-smart-image/" target="_blank" rel="noopener noreferrer"
+					<a href="https://github.com/Mujtabahaider-Dev/M8-Smart-Image/issues" target="_blank" rel="noopener noreferrer"
 						class="w-full bg-primary text-white text-center hover:bg-opacity-90 py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2" style="text-decoration:none;">
-						<span class="material-symbols-outlined text-sm">contact_support</span>
-						<?php esc_html_e('Visit Support Forum ↗', 'mak8it-smart-image'); ?>
+						<span class="material-symbols-outlined text-sm">bug_report</span>
+						<?php esc_html_e('Report a Bug on GitHub ↗', 'mak8it-smart-image'); ?>
 					</a>
 				</div>
 				

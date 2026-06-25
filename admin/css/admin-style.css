@@ -411,3 +411,11 @@
   background: #fff;
   color: #131118;
 }
+
+/* Custom color opacity classes for white text/icon elements */
+.text-white\/5 {
+  color: rgba(255, 255, 255, 0.05) !important;
+}
+.group:hover .group-hover\:text-white\/10 {
+  color: rgba(255, 255, 255, 0.1) !important;
+}
