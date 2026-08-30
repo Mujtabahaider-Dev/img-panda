@@ -73,4 +73,4 @@ To enable automated Alt Text generation for your uploads:
 
 ## 📄 License
 
-This project is licensed under the GPL v2 (or later) license. See the [GNU General Public License](https://www.gnu.org/licenses/gpl-2.0.html) for more details.
+This project is licensed under the GPL-v2 (or later) license. See the [GNU General Public License](https://www.gnu.org/licenses/gpl-2.0.html) for more details.
